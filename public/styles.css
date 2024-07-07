@@ -16,6 +16,8 @@ body {
     gap: 20px;
     justify-content: center;
     flex: 1;
+    margin-top: 400px;
+    
 }
 
 .sushi-card {

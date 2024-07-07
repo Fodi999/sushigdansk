@@ -3,78 +3,18 @@ document.addEventListener("DOMContentLoaded", function() {
     const cartItems = [];
 
     const cardsData = [
-        {
-            title: "Najlepszy zestaw Filadelfii",
-            details: "930 gramów, 32 sztuki",
-            price: "240 zł",
-            image: "images/Rectangle-3.webp"
-        },
-        {
-            title: "Zestaw California",
-            details: "800 gramów, 28 sztuki",
-            price: "220 zł",
-            image: "images/Rectangle-3.webp"
-        },
-        {
-            title: "Zestaw Tokio",
-            details: "850 gramów, 30 sztуки",
-            price: "230 zł",
-            image: "images/Rectangle-3.webp"
-        },
-        {
-            title: "Zestaw Osaka",
-            details: "900 грамов, 34 sztuki",
-            price: "250 zł",
-            image: "images/Rectangle-3.webp"
-        },
-        {
-            title: "Zestaw Kyoto",
-            details: "780 грамов, 26 sztуки",
-            price: "210 zł",
-            image: "images/Rectangle-3.webp"
-        },
-        {
-            title: "Zestaw Sapporo",
-            details: "920 грамов, 36 sztуки",
-            price: "260 zł",
-            image: "images/Rectangle-3.webp"
-        },
-        {
-            title: "Zestaw Nigiri",
-            details: "700 грамов, 20 sztуки",
-            price: "200 zł",
-            image: "images/Rectangle-3.webp"
-        },
-        {
-            title: "Zestaw Maki",
-            details: "750 грамов, 24 sztуки",
-            price: "215 zł",
-            image: "images/Rectangle-3.webp"
-        },
-        {
-            title: "Zestaw Ebi",
-            details: "800 грамов, 28 sztуки",
-            price: "225 zł",
-            image: "images/Rectangle-3.webp"
-        },
-        {
-            title: "Zestaw Kani",
-            details: "820 грамов, 29 sztуки",
-            price: "235 zł",
-            image: "images/Rectangle-3.webp"
-        },
-        {
-            title: "Zestaw Unagi",
-            details: "870 грамов, 32 sztуки",
-            price: "245 zł",
-            image: "images/Rectangle-3.webp"
-        },
-        {
-            title: "Zestaw Ikura",
-            details: "900 грамов, 33 sztуки",
-            price: "255 zł",
-            image: "images/Rectangle-3.webp"
-        }
+        { title: "Najlepszy zestaw Filadelfii", details: "930 грамов, 32 sztuki", price: "240 zł", image: "images/Rectangle-3.webp" },
+        { title: "Zestaw California", details: "800 грамов, 28 sztuki", price: "220 zł", image: "images/Rectangle-3.webp" },
+        { title: "Zestaw Tokio", details: "850 грамов, 30 sztуки", price: "230 zł", image: "images/Rectangle-3.webp" },
+        { title: "Zestaw Osaka", details: "900 грамов, 34 sztуки", price: "250 zł", image: "images/Rectangle-3.webp" },
+        { title: "Zestaw Kyoto", details: "780 грамов, 26 sztуки", price: "210 zł", image: "images/Rectangle-3.webp" },
+        { title: "Zestaw Sapporo", details: "920 грамов, 36 sztуки", price: "260 zł", image: "images/Rectangle-3.webp" },
+        { title: "Zestaw Nigiri", details: "700 грамов, 20 sztуки", price: "200 zł", image: "images/Rectangle-3.webp" },
+        { title: "Zestaw Maki", details: "750 грамов, 24 sztуки", price: "215 zł", image: "images/Rectangle-3.webp" },
+        { title: "Zestaw Ebi", details: "800 грамов, 28 sztуки", price: "225 zł", image: "images/Rectangle-3.webp" },
+        { title: "Zestaw Kani", details: "820 грамов, 29 sztуки", price: "235 zł", image: "images/Rectangle-3.webp" },
+        { title: "Zestaw Unagi", details: "870 грамов, 32 sztуки", price: "245 zł", image: "images/Rectangle-3.webp" },
+        { title: "Zestaw Ikura", details: "900 грамов, 33 sztуки", price: "255 zł", image: "images/Rectangle-3.webp" }
     ];
 
     cardsData.forEach(card => {
@@ -105,7 +45,6 @@ document.addEventListener("DOMContentLoaded", function() {
         buttonElement.className = "order-button";
         buttonElement.textContent = "Chcieć";
 
-        // Добавляем товар в корзину при нажатии на кнопку
         buttonElement.addEventListener("click", function() {
             cartItems.push(card);
             updateCartModal();
@@ -122,17 +61,13 @@ document.addEventListener("DOMContentLoaded", function() {
         cardContainer.appendChild(cardElement);
     });
 
-    // Код для активации ссылок в меню
     const list = document.querySelectorAll('.list');
     function activeLink() {
-        list.forEach((item) => 
-            item.classList.remove('active'));
+        list.forEach((item) => item.classList.remove('active'));
         this.classList.add('active');
     }
-    list.forEach((item) => 
-        item.addEventListener('click', activeLink));
+    list.forEach((item) => item.addEventListener('click', activeLink));
 
-    // Код для открытия и закрытия модального окна корзины
     const cartButton = document.getElementById("cart-button");
     const modal = document.getElementById("cart-modal");
     const closeModal = document.getElementById("close-modal");
@@ -145,7 +80,6 @@ document.addEventListener("DOMContentLoaded", function() {
         modal.style.display = "none";
     });
 
-    // Код для открытия и закрытия модального окна оформления заказа
     const checkoutButton = document.getElementById("checkout-button");
     const checkoutModal = document.getElementById("checkout-modal");
     const closeCheckoutModal = document.getElementById("close-checkout-modal");
@@ -167,40 +101,9 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Отправка данных формы на сервер
-    const checkoutForm = document.getElementById("checkout-form");
-    checkoutForm.addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        const formData = {
-            name: checkoutForm.name.value,
-            address: checkoutForm.address.value,
-            phone: checkoutForm.phone.value,
-            order: cartItems
-        };
-
-        fetch('/order', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert('Ваш заказ был успешно отправлен!');
-            checkoutModal.style.display = "none";
-            cartItems.length = 0; // Очищаем корзину
-        })
-        .catch(error => {
-            console.error('Ошибка:', error);
-            alert('Произошла ошибка при отправке заказа. Пожалуйста, попробуйте снова.');
-        });
-    });
-
     function updateCartModal() {
         const cartItemsContainer = document.getElementById("cart-items");
-        cartItemsContainer.innerHTML = ""; // Очищаем контейнер перед добавлением новых элементов
+        cartItemsContainer.innerHTML = "";
 
         cartItems.forEach((item, index) => {
             const itemElement = document.createElement("div");
@@ -226,7 +129,6 @@ document.addEventListener("DOMContentLoaded", function() {
             removeButton.className = "remove-button";
             removeButton.textContent = "Удалить";
 
-            // Удаление товара из корзины
             removeButton.addEventListener("click", function() {
                 cartItems.splice(index, 1);
                 updateCartModal();
@@ -243,7 +145,41 @@ document.addEventListener("DOMContentLoaded", function() {
             cartItemsContainer.appendChild(itemElement);
         });
     }
+
+    const checkoutForm = document.getElementById("checkout-form");
+    checkoutForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById("name").value;
+        const address = document.getElementById("address").value;
+        const phone = document.getElementById("phone").value;
+
+        const order = {
+            name: name,
+            address: address,
+            phone: phone,
+            order: cartItems
+        };
+
+        fetch("/order", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(order)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            checkoutModal.style.display = "none";
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Произошла ошибка при отправке заказа.");
+        });
+    });
 });
+
 
 
 
