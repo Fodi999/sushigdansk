@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sushi Delivery Gdansk</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="images/Rectangle-3.webp" as="image">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <meta name="description" content="Best sushi delivery in Gdansk. Order now and enjoy fresh sushi at home!">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="card-container" id="card-container">
+        <!-- Карточки будут добавлены здесь динамически с помощью JavaScript -->
+    </div>
+
+    <!-- Неподвижное меню -->
+    <div class="navigation">
+        <ul>
+            <li class="list active" id="cart-button">
+                <a href="#">
+                    <span class="icon"><ion-icon name="cart-outline"></ion-icon></span>
+                    <span class="text">Корзина</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="#">
+                    <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
+                    <span class="text">Кабинет</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="#">
+                    <span class="icon"><ion-icon name="bicycle-outline"></ion-icon></span>
+                    <span class="text">Доставка</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="#">
+                    <span class="icon"><ion-icon name="fast-food-outline"></ion-icon></span>
+                    <span class="text">Суши</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="#">
+                    <span class="icon"><ion-icon name="chatbubble-outline"></ion-icon></span>
+                    <span class="text">Чат</span>
+                </a>
+            </li>
+        </ul>
+        <div class="indicator"></div>
+    </div>
+
+    <!-- Модальное окно корзины -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-modal">&times;</span>
+            <h2>Корзина</h2>
+            <div id="cart-items">
+                <!-- Список товаров будет добавлен сюда -->
+            </div>
+            <button id="checkout-button" class="order-button">Сделать заказ</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно оформления заказа -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-checkout-modal">&times;</span>
+            <h2>Оформление заказа</h2>
+            <form id="checkout-form">
+                <label for="name">Имя:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="address">Адрес:</label>
+                <input type="text" id="address" name="address" required>
+                <label for="phone">Телефон:</label>
+                <input type="tel" id="phone" name="phone" required>
+                <button type="submit" class="order-button">Отправить</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="cart.js" defer></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
