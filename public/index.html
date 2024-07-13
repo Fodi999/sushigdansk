@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
     <meta name="description" content="Best sushi delivery in Gdansk. Order now and enjoy fresh sushi at home!">
     <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/navigation.css">
 </head>
 <body>
     <div class="card-container" id="card-container">
@@ -31,7 +32,7 @@
                     <span class="text">Кабинет</span>
                 </a>
             </li>
-            <li class="list">
+            <li class="list" id="delivery-button">
                 <a href="#">
                     <span class="icon"><ion-icon name="bicycle-outline"></ion-icon></span>
                     <span class="text">Доставка</span>
@@ -82,6 +83,18 @@
         </div>
     </div>
 
+    <!-- Модальное окно доставки -->
+    <div id="delivery-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-delivery-modal">&times;</span>
+            <h2>Доставка</h2>
+            <div id="delivery-map">
+                <!-- Здесь будет карта -->
+            </div>
+            <p>Время доставки: 30-45 минут</p>
+        </div>
+    </div>
+
     <!-- Контейнер для всплывающих уведомлений -->
     <div id="log-messages" class="log-container"></div>
 
@@ -90,6 +103,7 @@
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
 </html>
+
 
 
 

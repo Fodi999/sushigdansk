@@ -31,4 +31,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     setupCheckoutForm();
     setupNavigation(); // Инициализация навигации
+
+    // Добавляем обработчик для кнопки "Доставка"
+    document.getElementById("delivery-button").addEventListener("click", function() {
+        document.getElementById("delivery-modal").style.display = "flex";
+    });
+
+    document.getElementById("close-delivery-modal").addEventListener("click", function() {
+        document.getElementById("delivery-modal").style.display = "none";
+    });
 });
+
