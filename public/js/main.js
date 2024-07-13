@@ -1,6 +1,7 @@
 import { cardsData, createCard } from './cards.js';
 import { addItemToCart, getCartItems } from './cart.js';
 import { setupCheckoutForm } from './checkout.js';
+import { setupNavigation } from './navigation.js';
 
 document.addEventListener("DOMContentLoaded", function() {
     const cardContainer = document.getElementById("card-container");
@@ -29,4 +30,5 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     setupCheckoutForm();
+    setupNavigation(); // Инициализация навигации
 });
