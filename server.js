@@ -3,6 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const https = require('https');
+require('dotenv').config(); // Добавьте эту строку для загрузки переменных из .env
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -11,8 +12,8 @@ app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
-const TELEGRAM_TOKEN = 'ВАШ_ТЕЛЕГРАМ_ТОКЕН';
-const TELEGRAM_CHANNEL_ID = 'ВАШ_ID_ТЕЛЕГРАМ_КАНАЛА';
+const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
+const TELEGRAM_CHANNEL_ID = process.env.TELEGRAM_CHANNEL_ID;
 
 function sendTelegramMessage(order) {
     const orderDetails = order.order.map(item => `${item.title} - ${item.details} - ${item.price}`).join('\n');
@@ -72,6 +73,7 @@ app.post('/api/order', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
+
 
 
 
