@@ -1,0 +1,48 @@
+@media (max-width: 1200px) {
+    .card-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .card-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sushi-card {
+        max-width: 250px;
+    }
+
+    .sushi-title {
+        font-size: 18px;
+    }
+
+    .sushi-details {
+        font-size: 12px;
+    }
+
+    .price {
+        font-size: 16px;
+    }
+
+    .order-button {
+        width: 70px;
+        height: 30px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .card-container {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        padding: 0 16px;
+        margin-left: 10px;  /* Добавляем отступ слева */
+        margin-right: 10px; /* Добавляем отступ справа */
+    }
+
+    .sushi-card {
+        max-width: 100%;
+    }
+}
+

@@ -41,6 +41,14 @@ function sendTelegramMessage(order) {
         });
         res.on('end', () => {
             console.log('Message sent to Telegram:', response);
+            try {
+                const jsonResponse = JSON.parse(response);
+                if (!jsonResponse.ok) {
+                    console.error('Telegram API Error:', jsonResponse.description);
+                }
+            } catch (error) {
+                console.error('Error parsing Telegram response:', error);
+            }
         });
     });
 
@@ -72,5 +80,6 @@ app.post('/order', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
 
  
