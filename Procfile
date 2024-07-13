@@ -1,2 +1,2 @@
-web: go run .
+web: node server.js
 

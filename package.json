@@ -1,0 +1,21 @@
+{
+  "name": "sushipo",
+  "version": "1.0.0",
+  "description": "Sushi Delivery Gdansk - это веб-приложение для заказа суши онлайн. Пользователи могут просматривать различные наборы суши, добавлять их в корзину и оформлять заказ. Заказы отправляются на Telegram канал для дальнейшей обработки.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async-mutex": "^0.5.0",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "form-data": "^4.0.0",
+    "multer": "^1.4.5-lts.1"
+  }
+}
