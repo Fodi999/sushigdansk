@@ -11,12 +11,12 @@ app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
-const TELEGRAM_TOKEN = '7186385439:AAHJTPaPcSLq-5xSkCC1FkNzpnViJiXzjnM';
-const TELEGRAM_CHANNEL_ID = '1142224362';
+const TELEGRAM_TOKEN = 'ВАШ_ТЕЛЕГРАМ_ТОКЕН';
+const TELEGRAM_CHANNEL_ID = 'ВАШ_ID_ТЕЛЕГРАМ_КАНАЛА';
 
 function sendTelegramMessage(order) {
     const orderDetails = order.order.map(item => `${item.title} - ${item.details} - ${item.price}`).join('\n');
-    const message = `New Sushi Order:\n\nName: ${order.name}\nAddress: ${order.address}\nPhone: ${order.phone}\nOrder Details:\n${orderDetails}`;
+    const message = `Новый заказ на суши:\n\nИмя: ${order.name}\nАдрес: ${order.address}\nТелефон: ${order.phone}\nДетали заказа:\n${orderDetails}`;
     const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
     const data = JSON.stringify({
         chat_id: TELEGRAM_CHANNEL_ID,
@@ -40,12 +40,12 @@ function sendTelegramMessage(order) {
             response += chunk;
         });
         res.on('end', () => {
-            console.log('Message sent to Telegram:', response);
+            console.log('Сообщение отправлено в Telegram:', response);
         });
     });
 
     req.on('error', (error) => {
-        console.error('Error sending message to Telegram:', error);
+        console.error('Ошибка при отправке сообщения в Telegram:', error);
     });
 
     req.write(data);
@@ -56,22 +56,23 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.post('/order', (req, res) => {
+app.post('/api/order', (req, res) => {
     const order = req.body;
-    console.log('Order received:', order);
+    console.log('Получен заказ:', order);
 
     try {
         sendTelegramMessage(order);
-        res.status(200).json({ message: 'Order received and message sent to Telegram' });
+        res.status(200).json({ message: 'Заказ получен и сообщение отправлено в Telegram' });
     } catch (error) {
-        console.error('Error sending order:', error);
-        res.status(500).json({ message: 'Error sending order' });
+        console.error('Ошибка при отправке заказа:', error);
+        res.status(500).json({ message: 'Ошибка при отправке заказа' });
     }
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
+
 
 
 

@@ -147,38 +147,41 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     const checkoutForm = document.getElementById("checkout-form");
-    checkoutForm.addEventListener("submit", function(event) {
-        event.preventDefault();
+    if (checkoutForm) {
+        checkoutForm.addEventListener("submit", function(event) {
+            event.preventDefault();
 
-        const name = document.getElementById("name").value;
-        const address = document.getElementById("address").value;
-        const phone = document.getElementById("phone").value;
+            const name = document.getElementById("name").value;
+            const address = document.getElementById("address").value;
+            const phone = document.getElementById("phone").value;
 
-        const order = {
-            name: name,
-            address: address,
-            phone: phone,
-            order: cartItems
-        };
+            const order = {
+                name: name,
+                address: address,
+                phone: phone,
+                order: cartItems
+            };
 
-        fetch("/order", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(order)
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            checkoutModal.style.display = "none";
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("Произошла ошибка при отправке заказа.");
+            fetch("/api/order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(order)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                checkoutModal.style.display = "none";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Произошла ошибка при отправке заказа.");
+            });
         });
-    });
+    }
 });
+
 
 
 
