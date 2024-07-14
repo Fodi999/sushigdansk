@@ -11,6 +11,7 @@
     <meta name="description" content="Best sushi delivery in Gdansk. Order now and enjoy fresh sushi at home!">
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" /> <!-- Добавление Leaflet стилей -->
 </head>
 <body>
     <div class="card-container" id="card-container">
@@ -88,7 +89,7 @@
         <div class="modal-content">
             <span class="close-button" id="close-delivery-modal">&times;</span>
             <h2>Доставка</h2>
-            <div id="delivery-map">
+            <div id="delivery-map" style="height: 300px; width: 100%;">
                 <!-- Здесь будет карта -->
             </div>
             <p>Время доставки: 30-45 минут</p>
@@ -101,8 +102,14 @@
     <script type="module" src="js/main.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> <!-- Добавление Leaflet скриптов -->
 </body>
 </html>
+
+
+
+
+
 
 
 
