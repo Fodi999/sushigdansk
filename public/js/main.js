@@ -42,12 +42,29 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("delivery-modal").style.display = "none";
     });
 
+    // Добавляем обработчик для кнопки "Чат"
+    document.querySelector("li.list:nth-child(5) a").addEventListener("click", function() {
+        document.getElementById("chat-modal").style.display = "flex";
+    });
+
+    document.getElementById("close-chat-modal").addEventListener("click", function() {
+        document.getElementById("chat-modal").style.display = "none";
+    });
+
+    let map; // Переменная для хранения объекта карты
+
     function initializeMap() {
+        if (map) {
+            map.remove(); // Удаление существующей карты
+        }
+
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 const userLat = position.coords.latitude;
                 const userLng = position.coords.longitude;
-                const map = L.map('delivery-map').setView([userLat, userLng], 12);
+                console.log(`User location: ${userLat}, ${userLng}`); // Логирование координат пользователя
+
+                map = L.map('delivery-map').setView([userLat, userLng], 12);
 
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -67,20 +84,35 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 // Рассчитываем и выводим время доставки
                 calculateDeliveryTime(userLat, userLng, restaurantCoords);
-            }, function() {
-                // Если пользователь не дал разрешение на геолокацию или произошла ошибка
+            }, function(error) {
+                console.error('Error occurred. Error code: ' + error.code);
+                // Обработка ошибок
+                if (error.code === error.PERMISSION_DENIED) {
+                    console.log("User denied the request for Geolocation.");
+                } else if (error.code === error.POSITION_UNAVAILABLE) {
+                    console.log("Location information is unavailable.");
+                } else if (error.code === error.TIMEOUT) {
+                    console.log("The request to get user location timed out.");
+                } else {
+                    console.log("An unknown error occurred.");
+                }
                 handleLocationError();
             });
         } else {
             // Браузер не поддерживает геолокацию
+            console.log("Geolocation is not supported by this browser.");
             handleLocationError();
         }
     }
 
     function handleLocationError() {
+        if (map) {
+            map.remove(); // Удаление существующей карты
+        }
+
         const defaultLat = 54.3521; // Широта Гданьска
         const defaultLng = 18.6466; // Долгота Гданьска
-        const map = L.map('delivery-map').setView([defaultLat, defaultLng], 12);
+        map = L.map('delivery-map').setView([defaultLat, defaultLng], 12);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -104,12 +136,28 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Предположим средняя скорость доставки 50 км/ч
         const averageSpeed = 50;
-        const deliveryTime = distance / averageSpeed;
+        const deliveryTimeHours = distance / averageSpeed;
+
+        // Конвертируем время доставки в минуты
+        const deliveryTimeMinutes = deliveryTimeHours * 60;
 
         // Вывод времени доставки
-        console.log(`Время доставки: ${deliveryTime.toFixed(2)} часов`);
+        console.log(`Время доставки: ${deliveryTimeMinutes.toFixed(2)} минут`);
     }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
