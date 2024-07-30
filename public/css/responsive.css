@@ -1,3 +1,4 @@
+//css/responsive.css
 @media (max-width: 1200px) {
     .card-container {
         grid-template-columns: repeat(3, 1fr);
@@ -25,11 +26,7 @@
         font-size: 16px;
     }
 
-    .order-button {
-        width: 70px;
-        height: 30px;
-        font-size: 12px;
-    }
+ 
 }
 
 @media (max-width: 480px) {
