@@ -2,15 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sushi Delivery Gdansk</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="images/Rectangle-3.webp" as="image">
     <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
     <meta name="description" content="Best sushi delivery in Gdansk. Order now and enjoy fresh sushi at home!">
     <link rel="stylesheet" href="css/app.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" /> <!-- Добавление Leaflet стилей -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <meta name="apple-mobile-web-app-status-bar-style" content="white">
 </head>
 <body>
@@ -22,31 +29,31 @@
     <div class="navigation">
         <ul>
             <li class="list active" id="cart-button">
-                <a href="#">
+                <a href="#" aria-label="Cart">
                     <span class="icon"><ion-icon name="cart-outline"></ion-icon></span>
                     <span class="text">Корзина</span>
                 </a>
             </li>
             <li class="list">
-                <a href="#">
+                <a href="#" aria-label="Account">
                     <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
                     <span class="text">Кабинет</span>
                 </a>
             </li>
             <li class="list" id="delivery-button">
-                <a href="#">
+                <a href="#" aria-label="Delivery">
                     <span class="icon"><ion-icon name="bicycle-outline"></ion-icon></span>
                     <span class="text">Доставка</span>
                 </a>
             </li>
             <li class="list">
-                <a href="#">
+                <a href="#" aria-label="Sushi">
                     <span class="icon"><ion-icon name="fast-food-outline"></ion-icon></span>
                     <span class="text">Суши</span>
                 </a>
             </li>
             <li class="list">
-                <a href="#">
+                <a href="#" aria-label="Chat">
                     <span class="icon"><ion-icon name="chatbubble-outline"></ion-icon></span>
                     <span class="text">Чат</span>
                 </a>
@@ -54,17 +61,17 @@
         </ul>
         <div class="indicator"></div>
     </div>
+
     <!-- Модальное окно чата -->
-<div id="chat-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-button" id="close-chat-modal">&times;</span>
-        <h2>Чат</h2>
-        <div id="chat-content">
-            <!-- Здесь будет контент чата -->
+    <div id="chat-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-chat-modal">&times;</span>
+            <h2>Чат</h2>
+            <div id="chat-content">
+                <!-- Здесь будет контент чата -->
+            </div>
         </div>
     </div>
-</div>
-
 
     <!-- Модальное окно корзины -->
     <div id="cart-modal" class="modal">
@@ -113,6 +120,6 @@
     <script type="module" src="js/main.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> <!-- Добавление Leaflet скриптов -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </body>
 </html>
