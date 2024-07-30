@@ -16,4 +16,3 @@ export function setupNavigation() {
 
     listItems.forEach(item => item.addEventListener('click', updateActiveItem));
 }
-

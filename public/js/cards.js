@@ -89,3 +89,10 @@ export function createCard(card, addItemToCart) {
 
     return cardElement;
 }
+
+
+
+
+
+
+
