@@ -22,6 +22,8 @@ if (!TELEGRAM_TOKEN || !TELEGRAM_CHANNEL_ID) {
 app.post('/api/order', async (req, res) => {
     const order = req.body;
 
+    console.log('Received order:', order); // Лог для отладки
+
     try {
         await sendTelegramMessage(order);
         res.json({ message: "Заказ получен и сообщение отправлено в Telegram" });
@@ -37,6 +39,12 @@ async function sendTelegramMessage(order) {
     for (const item of order.items) {
         const caption = item.title;
         const photoPath = path.join(__dirname, 'public', 'images', path.basename(item.image));
+        
+        if (!fs.existsSync(photoPath)) {
+            console.error(`Photo not found: ${photoPath}`);
+            continue; // Skip this photo and continue with the next one
+        }
+        
         console.log(`Sending photo path: ${photoPath} with caption: ${caption}`);
         await sendTelegramPhoto(photoPath, caption);
     }
@@ -45,7 +53,7 @@ async function sendTelegramMessage(order) {
         `${item.title} - ${item.details} - ${item.price} - Количество: ${item.quantity}`
     )).join('\n');
 
-    const message = `Новый заказ на суши:\n\nИмя: ${order.name}\nАдрес: ${order.address}\nТелефон: ${order.phone}\nДетали заказа:\n${orderDetails}`;
+    const message = `Новый заказ на суши:\n\nИмя: ${order.name}\nАдрес: ${order.address}\nТелефон: ${order.phone}\nДополнительная информация: ${order.additionalInfo || 'Отсутствует'}\nДетали заказа:\n${orderDetails}`;
 
     const textURL = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
     const textPayload = { chat_id: TELEGRAM_CHANNEL_ID, text: message };
@@ -124,6 +132,7 @@ app.use(express.static('public'));
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
+
 
 
 

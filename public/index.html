@@ -21,6 +21,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="white">
 </head>
 <body>
+    <!-- Контейнер для карточек -->
     <div class="card-container" id="card-container">
         <!-- Карточки будут добавлены здесь динамически с помощью JavaScript -->
     </div>
@@ -77,34 +78,52 @@
         </div>
     </div>
 
-    <!-- Модальное окно корзины -->
-    <div id="cart-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" id="close-modal">&times;</span>
-            <h2>Корзина</h2>
-            <div id="cart-items">
-                <!-- Список товаров будет добавлен сюда -->
+<!-- Модальное окно корзины -->
+<div id="cart-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="close-modal">&times;</span>
+        <h2 class="cart-header">Корзина</h2>
+        <div id="cart-items">
+            <!-- Пример карточек товаров -->
+            <div class="cart-item">
+                <button class="remove-button">&times;</button>
+                <img src="images/Rectangle-3.webp" alt="Product Image">
+                <div class="item-details">
+                    <h3>Название товара</h3>
+                    <p>Описание товара</p>
+                    <p class="item-quantity">Количество: 1</p>
+                </div>
             </div>
-            <button id="checkout-button" class="order-button">Сделать заказ</button>
+            <!-- Здесь будут добавляться другие карточки товаров -->
         </div>
+        <button id="checkout-button" class="order-button">Сделать заказ</button>
     </div>
+</div>
 
-    <!-- Модальное окно оформления заказа -->
-    <div id="checkout-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" id="close-checkout-modal">&times;</span>
-            <h2>Оформление заказа</h2>
-            <form id="checkout-form">
-                <label for="name">Имя:</label>
-                <input type="text" id="name" name="name" required>
-                <label for="address">Адрес:</label>
-                <input type="text" id="address" name="address" required>
-                <label for="phone">Телефон:</label>
-                <input type="tel" id="phone" name="phone" required>
-                <button type="submit" class="order-button">Отправить</button>
-            </form>
-        </div>
+
+
+
+<!-- Модальное окно оформления заказа -->
+<div id="checkout-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="close-checkout-modal">&times;</span>
+        <h2>Оформление заказа</h2>
+        <form id="checkout-form">
+            <label for="name">Имя:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="address">Адрес:</label>
+            <input type="text" id="address" name="address" required>
+            <label for="phone">Телефон:</label>
+            <input type="tel" id="phone" name="phone" required>
+            <label for="additionalInfo">Дополнительная информация:</label>
+            <textarea id="additionalInfo" name="additionalInfo"></textarea>
+            <button type="submit" class="order-button">Отправить</button>
+        </form>
     </div>
+</div>
+
+
+
 
     <!-- Модальное окно доставки -->
     <div id="delivery-modal" class="modal">
@@ -121,6 +140,7 @@
     <!-- Контейнер для всплывающих уведомлений -->
     <div id="log-messages" class="log-container"></div>
 
+    <!-- Скрипты -->
     <script type="module" src="/js/main.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
@@ -136,9 +156,10 @@
             });
           });
         }
-      </script>
+    </script>
 </body>
 </html>
+
 
 
 

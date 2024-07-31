@@ -7,11 +7,12 @@ export function setupCheckoutForm() {
         const name = document.getElementById("name").value;
         const address = document.getElementById("address").value;
         const phone = document.getElementById("phone").value;
+        const additionalInfo = document.getElementById("additionalInfo").value; // Сбор значения дополнительной информации
 
         fetch("/api/cart/items")
             .then(response => response.json())
             .then(cartItems => {
-                const order = { name, address, phone, items: cartItems };
+                const order = { name, address, phone, additionalInfo, items: cartItems }; // Добавляем additionalInfo в объект заказа
                 fetch("/api/order", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },

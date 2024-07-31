@@ -64,7 +64,8 @@
     opacity: 1;
 }
 
-.list.active ~ .indicator {
+/* Убедитесь, что этот селектор соответствует вашей структуре HTML */
+.list.active .indicator {
     left: calc(50% - 35px);
 }
 
@@ -94,6 +95,20 @@
     position: relative;
 }
 
+/* Стили для карточек товаров в корзине */
+#cart-items .cart-item {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin: 10px auto; /* Центрируем карточки и задаем вертикальные отступы */
+    border-radius: 5px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%; /* Уменьшаем ширину карточек */
+    max-width: 400px; /* Максимальная ширина карточек */
+}
+
 .close-button {
     position: absolute;
     top: 10px;
@@ -108,4 +123,11 @@
 .close-button:focus {
     color: black;
     text-decoration: none;
+}
+
+.cart-header {
+    margin-top: 0 !important; /* Уменьшите отступ сверху */
+    padding-top: 0 !important; /* Уменьшите внутренний отступ сверху */
+    position: relative !important; /* Используйте относительное позиционирование */
+    top: -100px !important; /* Поднимите заголовок на 100 пикселей вверх */
 }

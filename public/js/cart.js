@@ -29,6 +29,13 @@ export function getCartItems() {
                 const itemElement = document.createElement("div");
                 itemElement.className = "cart-item";
 
+                const removeButton = document.createElement("button");
+                removeButton.className = "remove-button";
+                removeButton.innerHTML = "&times;"; // Крестик для удаления
+                removeButton.addEventListener("click", function() {
+                    removeItemFromCart(index);
+                });
+
                 const itemImage = document.createElement("img");
                 itemImage.src = item.image;
                 itemImage.alt = item.title;
@@ -46,23 +53,17 @@ export function getCartItems() {
                 itemPrice.textContent = item.price;
 
                 const itemQuantity = document.createElement("p");
+                itemQuantity.className = "item-quantity"; // Добавлен класс для выделения количества
                 itemQuantity.textContent = `Количество: ${item.quantity}`;
-
-                const removeButton = document.createElement("button");
-                removeButton.className = "remove-button";
-                removeButton.textContent = "Удалить";
-                removeButton.addEventListener("click", function() {
-                    removeItemFromCart(index);
-                });
 
                 itemDetailsContainer.appendChild(itemTitle);
                 itemDetailsContainer.appendChild(itemDetails);
                 itemDetailsContainer.appendChild(itemPrice);
                 itemDetailsContainer.appendChild(itemQuantity);
 
+                itemElement.appendChild(removeButton);
                 itemElement.appendChild(itemImage);
                 itemElement.appendChild(itemDetailsContainer);
-                itemElement.appendChild(removeButton);
 
                 cartItemsContainer.appendChild(itemElement);
             });
@@ -107,3 +108,4 @@ export function clearCart() {
         console.error("Error:", error);
     });
 }
+
