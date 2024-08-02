@@ -1,6 +1,12 @@
 @import url('styles.css');
+@import url('theme.css');
+@import url('components.css');
+@import url('buttons.css');
 @import url('navigation.css');
 @import url('responsive.css');
+
+
+
 
 
 

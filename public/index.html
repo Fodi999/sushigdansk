@@ -78,52 +78,46 @@
         </div>
     </div>
 
-<!-- Модальное окно корзины -->
-<div id="cart-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-button" id="close-modal">&times;</span>
-        <h2 class="cart-header">Корзина</h2>
-        <div id="cart-items">
-            <!-- Пример карточек товаров -->
-            <div class="cart-item">
-                <button class="remove-button">&times;</button>
-                <img src="images/Rectangle-3.webp" alt="Product Image">
-                <div class="item-details">
-                    <h3>Название товара</h3>
-                    <p>Описание товара</p>
-                    <p class="item-quantity">Количество: 1</p>
+    <!-- Модальное окно корзины -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-modal">&times;</span>
+            <h2 class="cart-header">Корзина</h2>
+            <div id="cart-items">
+                <!-- Пример карточек товаров -->
+                <div class="cart-item">
+                    <button class="remove-button">&times;</button>
+                    <img src="images/Rectangle-3.webp" alt="Product Image">
+                    <div class="item-details">
+                        <h3>Название товара</h3>
+                        <p>Описание товара</p>
+                        <p class="item-quantity">Количество: 1</p>
+                    </div>
                 </div>
+                <!-- Здесь будут добавляться другие карточки товаров -->
             </div>
-            <!-- Здесь будут добавляться другие карточки товаров -->
+            <button id="checkout-button" class="order-button">Сделать заказ</button>
         </div>
-        <button id="checkout-button" class="order-button">Сделать заказ</button>
     </div>
-</div>
 
-
-
-
-<!-- Модальное окно оформления заказа -->
-<div id="checkout-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-button" id="close-checkout-modal">&times;</span>
-        <h2>Оформление заказа</h2>
-        <form id="checkout-form">
-            <label for="name">Имя:</label>
-            <input type="text" id="name" name="name" required>
-            <label for="address">Адрес:</label>
-            <input type="text" id="address" name="address" required>
-            <label for="phone">Телефон:</label>
-            <input type="tel" id="phone" name="phone" required>
-            <label for="additionalInfo">Дополнительная информация:</label>
-            <textarea id="additionalInfo" name="additionalInfo"></textarea>
-            <button type="submit" class="order-button">Отправить</button>
-        </form>
+    <!-- Модальное окно оформления заказа -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-checkout-modal">&times;</span>
+            <h2>Оформление заказа</h2>
+            <form id="checkout-form">
+                <label for="name">Имя:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="address">Адрес:</label>
+                <input type="text" id="address" name="address" required>
+                <label for="phone">Телефон:</label>
+                <input type="tel" id="phone" name="phone" required>
+                <label for="additionalInfo">Дополнительная информация:</label>
+                <textarea id="additionalInfo" name="additionalInfo"></textarea>
+                <button type="submit" class="order-button">Отправить</button>
+            </form>
+        </div>
     </div>
-</div>
-
-
-
 
     <!-- Модальное окно доставки -->
     <div id="delivery-modal" class="modal">

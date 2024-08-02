@@ -1,4 +1,4 @@
- /* Стили для навигации */
+  /* Стили для навигации */
 .navigation {
     position: fixed;
     bottom: 20px; /* Отступ снизу */
@@ -69,65 +69,3 @@
     left: calc(50% - 35px);
 }
 
-/* Стили для модальных окон */
-.modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1000; /* Высокий z-index для отображения поверх других элементов */
-    top: 0;
-    left: 0;
-    width: 100%; 
-    height: 100%; 
-    background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный черный фон */
-    justify-content: center; 
-    align-items: center; 
-    overflow: auto; /* Добавляем прокрутку, если контент выходит за пределы окна */
-}
-
-.modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    max-width: 500px;
-    margin: auto;
-    position: relative;
-}
-
-/* Стили для карточек товаров в корзине */
-#cart-items .cart-item {
-    background-color: #f9f9f9;
-    padding: 10px;
-    margin: 10px auto; /* Центрируем карточки и задаем вертикальные отступы */
-    border-radius: 5px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 90%; /* Уменьшаем ширину карточек */
-    max-width: 400px; /* Максимальная ширина карточек */
-}
-
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 28px;
-    font-weight: bold;
-    color: #aaa;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
-}
-
-.cart-header {
-    margin-top: 0 !important; /* Уменьшите отступ сверху */
-    padding-top: 0 !important; /* Уменьшите внутренний отступ сверху */
-    position: relative !important; /* Используйте относительное позиционирование */
-    top: -100px !important; /* Поднимите заголовок на 100 пикселей вверх */
-}

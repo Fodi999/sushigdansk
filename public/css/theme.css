@@ -1,0 +1,24 @@
+body {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.sushi-title {
+    color: #5B5A5A;
+}
+
+.sushi-details {
+    color: #909090;
+}
+
+.price {
+    color: #3E4076;
+}
+
+.cart-item .item-details h3 {
+    color: #150101;
+}
+
+.cart-item .item-quantity {
+    color: red;
+}
