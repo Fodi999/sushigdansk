@@ -3,11 +3,13 @@
     src: url('../fonts/Roboto-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
+    font-display: swap; /* Добавлено для обеспечения видимости текста во время загрузки шрифта */
 }
 
 body {
     background-color: #f5f5f5;
-    font-family: 'Roboto', sans-serif; /* Указание запасного шрифта */
+    font-family: 'Roboto', sans-serif;
+    color: #333333; /* Обеспечиваем достаточный контраст текста */
     margin: 0;
     padding: 20px;
     display: flex;
@@ -15,6 +17,7 @@ body {
     justify-content: center;
     min-height: 100vh;
 }
+
 
 
 
