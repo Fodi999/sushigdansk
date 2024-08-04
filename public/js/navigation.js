@@ -1,3 +1,4 @@
+//js/navigation.js
 export function setupNavigation() {
     const listItems = document.querySelectorAll('.navigation .list');
     const indicator = document.querySelector('.navigation .indicator');

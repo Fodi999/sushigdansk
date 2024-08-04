@@ -1,3 +1,4 @@
+//js/cart.js
 import { logMessage } from './logger.js';
 
 export function addItemToCart(item) {
@@ -9,6 +10,7 @@ export function addItemToCart(item) {
     .then(response => {
         if (response.ok) {
             logMessage("Товар добавлен в корзину!");
+            getCartItems(); // Обновление списка элементов корзины после добавления
         } else {
             logMessage("Ошибка при добавлении товара в корзину.");
         }
@@ -80,7 +82,7 @@ export function removeItemFromCart(index) {
     })
     .then(response => {
         if (response.ok) {
-            getCartItems();
+            getCartItems(); // Обновление списка элементов корзины после удаления
             logMessage("Товар удален из корзины.");
         } else {
             logMessage("Ошибка при удалении товара из корзины.");
@@ -98,6 +100,7 @@ export function clearCart() {
     })
     .then(response => {
         if (response.ok) {
+            getCartItems(); // Обновление списка элементов корзины после очистки
             logMessage("Корзина очищена!");
         } else {
             logMessage("Ошибка при очистке корзины.");
@@ -108,4 +111,5 @@ export function clearCart() {
         console.error("Error:", error);
     });
 }
+
 

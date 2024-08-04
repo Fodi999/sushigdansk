@@ -1,8 +1,7 @@
- /* Стили для экранов до 1200px */
+/* Стили для экранов до 1200px */
 @media (max-width: 1200px) {
     .card-container {
         grid-template-columns: repeat(3, 1fr);
-
     }
 }
 
@@ -10,10 +9,12 @@
 @media (max-width: 768px) {
     .card-container {
         grid-template-columns: repeat(2, 1fr);
+        gap: 10px; /* Добавляем отступ между карточками */
     }
 
     .sushi-card {
         max-width: 250px;
+        margin: 10px; /* Добавляем отступ вокруг карточек */
     }
 
     .sushi-title {
@@ -35,13 +36,18 @@
         left: auto; /* Убираем значение справа */
         right: 0px; /* Добавляем значение слева */
     }
+
     .card-container {
         grid-template-columns: 1fr;
         justify-items: center;
         padding: 0 16px;
+        gap: 10px; /* Добавляем отступ между карточками */
     }
 
     .sushi-card {
         max-width: 100%;
+        margin: 10px; /* Добавляем отступ вокруг карточек */
     }
 }
+
+

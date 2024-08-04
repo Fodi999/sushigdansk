@@ -1,3 +1,4 @@
+//js/logger.js
 export function logMessage(message) {
     const logContainer = document.getElementById("log-messages");
     const messageElement = document.createElement("div");

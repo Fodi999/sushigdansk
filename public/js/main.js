@@ -1,14 +1,32 @@
-import { cardsData, createCard } from './cards.js';
+import { cardsDataRow1, cardsDataRow2, cardsDataRow3, cardsDataRow4, createCard } from './cards.js';
 import { addItemToCart, getCartItems } from './cart.js';
 import { setupCheckoutForm } from './checkout.js';
 import { setupNavigation } from './navigation.js';
 
 document.addEventListener("DOMContentLoaded", function() {
-    const cardContainer = document.getElementById("card-container");
+    const cardContainerRow1 = document.getElementById("card-container-row-1");
+    const cardContainerRow2 = document.getElementById("card-container-row-2");
+    const cardContainerRow3 = document.getElementById("card-container-row-3");
+    const cardContainerRow4 = document.getElementById("card-container-row-4");
 
-    cardsData.forEach(card => {
+    cardsDataRow1.forEach(card => {
         const cardElement = createCard(card, addItemToCart);
-        cardContainer.appendChild(cardElement);
+        cardContainerRow1.appendChild(cardElement);
+    });
+
+    cardsDataRow2.forEach(card => {
+        const cardElement = createCard(card, addItemToCart);
+        cardContainerRow2.appendChild(cardElement);
+    });
+
+    cardsDataRow3.forEach(card => {
+        const cardElement = createCard(card, addItemToCart);
+        cardContainerRow3.appendChild(cardElement);
+    });
+
+    cardsDataRow4.forEach(card => {
+        const cardElement = createCard(card, addItemToCart);
+        cardContainerRow4.appendChild(cardElement);
     });
 
     document.getElementById("cart-button").addEventListener("click", function() {
@@ -145,27 +163,5 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log(`Время доставки: ${deliveryTimeMinutes.toFixed(2)} минут`);
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

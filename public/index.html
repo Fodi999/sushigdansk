@@ -2,32 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Sushi Delivery Gdansk</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
-    <link rel="manifest" href="/images/site.webmanifest">
-    <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
-    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="preload" href="/css/app.css" as="style">
     <link rel="preload" href="/images/Rectangle-3.webp" as="image">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <meta name="description" content="Best sushi delivery in Gdansk. Order now and enjoy fresh sushi at home!">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <link rel="stylesheet" href="/css/header.css">
+    <meta name="description" content="Best sushi delivery in Gdansk. Order now and enjoy fresh sushi at home!">
 </head>
 <body>
-    <!-- Контейнер для карточек -->
-    <div class="card-container" id="card-container">
-        <!-- Карточки будут добавлены здесь динамически с помощью JavaScript -->
-    </div>
+    <!-- Хедер с логотипом и текстом -->
+    <header class="header">
+        <img src="images/feis-1.webp" alt="Logo" class="logo" width="50" height="50">
+        <h1 class="header-text">Sea food from chef Dmitry Fomin</h1>
+    </header>
+
+    <main class="main-content">
+        <!-- Название первого ряда -->
+        <div class="section-title-box">
+            <h2 class="section-title"><i class='bx bxs-right-arrow'></i> Суши</h2>
+        </div>
+        <div class="card-container" id="card-container-row-1">
+            <!-- Карточки первого ряда будут добавлены здесь динамически с помощью JavaScript -->
+        </div>
+
+        <!-- Название второго ряда -->
+        <div class="section-title-box">
+            <h2 class="section-title"><i class='bx bxs-right-arrow'></i> Роллы</h2>
+        </div>
+        <div class="card-container" id="card-container-row-2">
+            <!-- Карточки второго ряда будут добавлены здесь динамически с помощью JavaScript -->
+        </div>
+
+        <!-- Название третьего ряда -->
+        <div class="section-title-box">
+            <h2 class="section-title"><i class='bx bxs-right-arrow'></i> Сеты</h2>
+        </div>
+        <div class="card-container" id="card-container-row-3">
+            <!-- Карточки третьего ряда будут добавлены здесь динамически с помощью JavaScript -->
+        </div>
+
+        <!-- Название четвертого ряда -->
+        <div class="section-title-box">
+            <h2 class="section-title"><i class='bx bxs-right-arrow'></i> Закуски</h2>
+        </div>
+        <div class="card-container" id="card-container-row-4">
+            <!-- Карточки четвертого ряда будут добавлены здесь динамически с помощью JavaScript -->
+        </div>
+    </main>
 
     <!-- Неподвижное меню -->
     <div class="navigation">
@@ -165,6 +189,11 @@
     </script>
 </body>
 </html>
+
+
+
+
+
 
 
 
