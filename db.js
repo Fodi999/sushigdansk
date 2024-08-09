@@ -29,9 +29,3 @@ module.exports = {
     connectToDatabase,
     getDatabase,
 };
-
-
-
-
-
- 

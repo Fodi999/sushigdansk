@@ -192,22 +192,3 @@ app.get('/api/orders', async (req, res) => {
 app.use(express.static('public'));
 
 startServer();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
