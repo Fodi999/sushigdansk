@@ -19,7 +19,7 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 }, // Ограничение размера файла до 10MB
 });
 
-const { TELEGRAM_TOKEN, TELEGRAM_CHANNEL_ID, PORT = 8080 } = process.env;
+const { TELEGRAM_TOKEN, TELEGRAM_CHANNEL_ID, PORT = 8081 } = process.env;
 
 if (!TELEGRAM_TOKEN || !TELEGRAM_CHANNEL_ID) {
     console.error('TELEGRAM_TOKEN and TELEGRAM_CHANNEL_ID must be set in the .env file');
