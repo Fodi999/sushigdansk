@@ -18,11 +18,7 @@
     "express-session": "^1.18.0",
     "form-data": "^4.0.0",
     "mongodb": "^6.8.0",
-    "mongoose": "^8.5.2",
-    "multer": "^1.4.5-lts.1",
-    "passport": "^0.7.0",
-    "passport-telegram": "^1.0.0",
-    "passport-telegram-official": "^1.1.0"
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.7.0",
@@ -31,5 +27,9 @@
     "eslint-plugin-node": "^11.1.0",
     "globals": "^15.8.0",
     "postcss": "^8.4.39"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }
+
