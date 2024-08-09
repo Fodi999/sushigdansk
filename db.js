@@ -1,34 +1,37 @@
-//db.js
+// db.js
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
-const uri = process.env.MONGODB_URI;
-
-let client;
+let db;
 
 async function connectToDatabase() {
-    if (!client) {
-        try {
-            client = new MongoClient(uri);  // Убраны устаревшие опции
-            await client.connect();
-            console.log("Connected to MongoDB");
-        } catch (err) {
-            console.error("Failed to connect to MongoDB", err);
-            throw err; // Проброс ошибки для дальнейшей обработки
-        }
+    if (db) return db;
+
+    try {
+        const client = await MongoClient.connect(process.env.MONGODB_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        db = client.db();
+        return db;
+    } catch (error) {
+        console.error('Could not connect to MongoDB:', error);
+        throw error;
     }
-    return client;
 }
 
 async function getDatabase() {
-    const client = await connectToDatabase();
-    return client.db('sushigdansk');
+    if (!db) {
+        await connectToDatabase();
+    }
+    return db;
 }
 
 module.exports = {
     connectToDatabase,
     getDatabase,
 };
+
 
 
 
