@@ -1,16 +1,23 @@
+// server.js
 const express = require('express');
 const axios = require('axios');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const FormData = require('form-data');
+const { getDatabase, connectToDatabase } = require('./db');
+const { ObjectId } = require('mongodb');
 require('dotenv').config();
 
 console.log('Starting server...');
 
 const app = express();
 app.use(express.json());
-const upload = multer({ dest: 'public/images/' });
+
+const upload = multer({
+    dest: 'public/images/',
+    limits: { fileSize: 10 * 1024 * 1024 }, // Ограничение размера файла до 10MB
+});
 
 const { TELEGRAM_TOKEN, TELEGRAM_CHANNEL_ID, PORT = 8080 } = process.env;
 
@@ -19,17 +26,45 @@ if (!TELEGRAM_TOKEN || !TELEGRAM_CHANNEL_ID) {
     process.exit(1);
 }
 
+// Проверка подключения к MongoDB
+async function startServer() {
+    try {
+        const client = await connectToDatabase();
+        console.log("MongoDB connection established successfully");
+
+        app.listen(PORT, () => {
+            console.log(`Server is running at http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error("Failed to connect to MongoDB:", error);
+        process.exit(1); // Завершение процесса, если подключение не удалось
+    }
+}
+
 app.post('/api/order', async (req, res) => {
     const order = req.body;
 
-    console.log('Received order:', order); // Лог для отладки
+    if (!order || !order.items || !order.name || !order.address || !order.phone) {
+        return res.status(400).json({ error: 'Missing required order fields' });
+    }
+
+    console.log('Received order:', order);
 
     try {
+        const db = await getDatabase();
+        const result = await db.collection('orders').insertOne(order);
+
+        if (result.insertedCount === 0) {
+            throw new Error('Failed to insert order into the database');
+        }
+
+        console.log("Order inserted:", result.insertedId);
+
         await sendTelegramMessage(order);
         res.json({ message: "Заказ получен и сообщение отправлено в Telegram" });
     } catch (error) {
-        console.error("Error sending order to Telegram:", error);
-        res.status(500).json({ error: "Failed to send order" });
+        console.error("Error processing order:", error);
+        res.status(500).json({ error: "Failed to process order" });
     }
 });
 
@@ -42,7 +77,7 @@ async function sendTelegramMessage(order) {
         
         if (!fs.existsSync(photoPath)) {
             console.error(`Photo not found: ${photoPath}`);
-            continue; // Skip this photo and continue with the next one
+            continue;
         }
         
         console.log(`Sending photo path: ${photoPath} with caption: ${caption}`);
@@ -86,52 +121,83 @@ async function sendTelegramPhoto(photoPath, caption) {
     }
 }
 
-const cartItems = [];
-const mutex = new (require('async-mutex').Mutex)();
-
 app.post('/api/cart/add', async (req, res) => {
     const item = req.body;
 
-    await mutex.runExclusive(() => {
-        cartItems.push(item);
-    });
+    if (!item || !item.title || !item.price || !item.quantity) {
+        return res.status(400).json({ error: 'Missing required item fields' });
+    }
 
-    res.sendStatus(200);
+    try {
+        const db = await getDatabase();
+        await db.collection('cart').insertOne(item);
+        res.sendStatus(200);
+    } catch (error) {
+        console.error("Error adding item to cart:", error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.get('/api/cart/items', async (req, res) => {
-    await mutex.runExclusive(() => {
-        res.json(cartItems);
-    });
+    try {
+        const db = await getDatabase();
+        const items = await db.collection('cart').find().toArray();
+        console.log("Fetched items:", items);
+        res.json(items);
+    } catch (error) {
+        console.error("Error fetching cart items:", error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
-app.delete('/api/cart/items/:index', async (req, res) => {
-    const index = parseInt(req.params.index);
+app.delete('/api/cart/items/:id', async (req, res) => {
+    const id = req.params.id;
 
-    if (isNaN(index) || index < 0 || index >= cartItems.length) {
-        return res.status(400).json({ error: "Invalid item index" });
+    if (!ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid item ID' });
     }
 
-    await mutex.runExclusive(() => {
-        cartItems.splice(index, 1);
-    });
-
-    res.sendStatus(200);
+    try {
+        const db = await getDatabase();
+        await db.collection('cart').deleteOne({ _id: new ObjectId(id) });
+        res.sendStatus(200);
+    } catch (error) {
+        console.error("Error deleting item from cart:", error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.post('/api/cart/clear', async (req, res) => {
-    await mutex.runExclusive(() => {
-        cartItems.length = 0;
-    });
+    try {
+        const db = await getDatabase();
+        await db.collection('cart').deleteMany({});
+        res.sendStatus(200);
+    } catch (error) {
+        console.error("Error clearing cart:", error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
-    res.sendStatus(200);
+app.get('/api/orders', async (req, res) => {
+    try {
+        const db = await getDatabase();
+        const orders = await db.collection('orders').find().toArray();
+        res.json(orders);
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.use(express.static('public'));
 
-app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
-});
+startServer();
+
+
+
+
+
+
 
 
 
