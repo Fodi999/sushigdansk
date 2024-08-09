@@ -1,25 +1,23 @@
-# Используем более новый официальный образ Node.js как базовый
+# Use an official Node.js runtime as a parent image
 FROM node:18
 
-# Устанавливаем рабочую директорию
+# Set the working directory in the container
 WORKDIR /app
 
-# Копируем package.json и package-lock.json
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Устанавливаем зависимости
-RUN npm install
+# Install dependencies
+RUN npm install --production
 
-# Копируем остальной исходный код приложения
+# Copy the rest of the application files
 COPY . .
 
-# Объявляем переменную окружения для порта
-ENV PORT=8080
-
-# Открываем порт для приложения
+# Expose the port the app runs on
 EXPOSE 8080
 
-# Команда для запуска приложения
-CMD ["npm", "start"]
+# Define the command to run your app
+CMD ["node", "server.js"]
+
 
  
