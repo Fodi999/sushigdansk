@@ -8,10 +8,8 @@ async function connectToDatabase() {
     if (db) return db;
 
     try {
-        const client = await MongoClient.connect(process.env.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        // Подключение к MongoDB без устаревших опций
+        const client = await MongoClient.connect(process.env.MONGODB_URI);
         db = client.db();
         return db;
     } catch (error) {
