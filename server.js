@@ -1,70 +1,56 @@
-// server.js
 const express = require('express');
 const axios = require('axios');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const FormData = require('form-data');
-const { getDatabase, connectToDatabase } = require('./db');
-const { ObjectId } = require('mongodb');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 console.log('Starting server...');
 
 const app = express();
 app.use(express.json());
+const upload = multer({ dest: 'public/images/' });
 
-const upload = multer({
-    dest: 'public/images/',
-    limits: { fileSize: 10 * 1024 * 1024 }, // Ограничение размера файла до 10MB
-});
+const { TELEGRAM_TOKEN, TELEGRAM_CHANNEL_ID, MONGODB_URI, PORT = 8080 } = process.env;
 
-const { TELEGRAM_TOKEN, TELEGRAM_CHANNEL_ID, PORT = 8081 } = process.env;
-
-if (!TELEGRAM_TOKEN || !TELEGRAM_CHANNEL_ID) {
-    console.error('TELEGRAM_TOKEN and TELEGRAM_CHANNEL_ID must be set in the .env file');
+if (!TELEGRAM_TOKEN || !TELEGRAM_CHANNEL_ID || !MONGODB_URI) {
+    console.error('TELEGRAM_TOKEN, TELEGRAM_CHANNEL_ID и MONGODB_URI должны быть указаны в .env файле');
     process.exit(1);
 }
 
-// Проверка подключения к MongoDB
-async function startServer() {
-    try {
-        const client = await connectToDatabase();
-        console.log("MongoDB connection established successfully");
+// Подключение к MongoDB с использованием Mongoose
+mongoose.connect(MONGODB_URI)
+    .then(() => {
+        console.log('Successfully connected to MongoDB with Mongoose');
+    })
+    .catch((error) => {
+        console.error('Could not connect to MongoDB:', error);
+        process.exit(1);
+    });
 
-        app.listen(PORT, () => {
-            console.log(`Server is running at http://localhost:${PORT}`);
-        });
-    } catch (error) {
-        console.error("Failed to connect to MongoDB:", error);
-        process.exit(1); // Завершение процесса, если подключение не удалось
-    }
-}
+// Определение схемы и модели для карточек
+const cardSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    details: { type: String, required: true },
+    price: { type: String, required: true },
+    image: { type: String, required: true },
+    quantity: { type: Number, required: true },
+}, { timestamps: true });
+
+const Card = mongoose.model('Card', cardSchema);
 
 app.post('/api/order', async (req, res) => {
     const order = req.body;
-
-    if (!order || !order.items || !order.name || !order.address || !order.phone) {
-        return res.status(400).json({ error: 'Missing required order fields' });
-    }
-
-    console.log('Received order:', order);
+    console.log('Received order:', JSON.stringify(order, null, 2)); // Лог для отладки
 
     try {
-        const db = await getDatabase();
-        const result = await db.collection('orders').insertOne(order);
-
-        if (result.insertedCount === 0) {
-            throw new Error('Failed to insert order into the database');
-        }
-
-        console.log("Order inserted:", result.insertedId);
-
         await sendTelegramMessage(order);
         res.json({ message: "Заказ получен и сообщение отправлено в Telegram" });
     } catch (error) {
-        console.error("Error processing order:", error);
-        res.status(500).json({ error: "Failed to process order" });
+        console.error("Error sending order to Telegram:", error);
+        res.status(500).json({ error: "Failed to send order" });
     }
 });
 
@@ -77,7 +63,7 @@ async function sendTelegramMessage(order) {
         
         if (!fs.existsSync(photoPath)) {
             console.error(`Photo not found: ${photoPath}`);
-            continue;
+            continue; // Пропустить это фото и продолжить с другими
         }
         
         console.log(`Sending photo path: ${photoPath} with caption: ${caption}`);
@@ -121,74 +107,66 @@ async function sendTelegramPhoto(photoPath, caption) {
     }
 }
 
-app.post('/api/cart/add', async (req, res) => {
-    const item = req.body;
+// Работа с корзиной через Mongoose
 
-    if (!item || !item.title || !item.price || !item.quantity) {
-        return res.status(400).json({ error: 'Missing required item fields' });
-    }
+app.post('/api/cart/add', async (req, res) => {
+    const { title, details, price, image, quantity } = req.body;
 
     try {
-        const db = await getDatabase();
-        await db.collection('cart').insertOne(item);
-        res.sendStatus(200);
+        const card = new Card({ title, details, price, image, quantity });
+        await card.save();
+        res.status(200).json({ message: 'Card added to cart successfully', id: card._id });
     } catch (error) {
-        console.error("Error adding item to cart:", error);
-        res.status(500).send('Internal Server Error');
+        console.error('Error adding card to cart:', error);
+        res.status(500).json({ error: 'Failed to add card to cart' });
     }
 });
 
 app.get('/api/cart/items', async (req, res) => {
+    console.log('Fetching cart items...'); // Лог начала запроса
     try {
-        const db = await getDatabase();
-        const items = await db.collection('cart').find().toArray();
-        console.log("Fetched items:", items);
+        const items = await Card.find();
+        console.log('Cart items fetched:', items); // Лог полученных элементов
         res.json(items);
     } catch (error) {
-        console.error("Error fetching cart items:", error);
-        res.status(500).send('Internal Server Error');
+        console.error('Error fetching cart items:', error);
+        res.status(500).json({ error: 'Failed to fetch cart items' });
     }
 });
 
 app.delete('/api/cart/items/:id', async (req, res) => {
-    const id = req.params.id;
-
-    if (!ObjectId.isValid(id)) {
-        return res.status(400).json({ error: 'Invalid item ID' });
-    }
+    const { id } = req.params;
+    console.log(`Received request to delete item with id: ${id}`);
 
     try {
-        const db = await getDatabase();
-        await db.collection('cart').deleteOne({ _id: new ObjectId(id) });
-        res.sendStatus(200);
+        const result = await Card.deleteOne({ _id: id });
+
+        if (result.deletedCount > 0) {
+            console.log(`Item with id: ${id} successfully removed from cart.`);
+            res.status(200).json({ message: `Item with id ${id} successfully removed from cart` });
+        } else {
+            res.status(404).json({ error: 'Item not found' });
+        }
     } catch (error) {
-        console.error("Error deleting item from cart:", error);
-        res.status(500).send('Internal Server Error');
+        console.error('Error removing item from cart:', error);
+        res.status(500).json({ error: 'Failed to remove item from cart' });
     }
 });
 
 app.post('/api/cart/clear', async (req, res) => {
+    console.log('Clearing cart...'); // Лог начала очистки корзины
     try {
-        const db = await getDatabase();
-        await db.collection('cart').deleteMany({});
-        res.sendStatus(200);
+        await Card.deleteMany({});
+        console.log('Cart cleared successfully'); // Лог успешной очистки корзины
+        res.status(200).json({ message: 'Cart cleared successfully' });
     } catch (error) {
-        console.error("Error clearing cart:", error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-app.get('/api/orders', async (req, res) => {
-    try {
-        const db = await getDatabase();
-        const orders = await db.collection('orders').find().toArray();
-        res.json(orders);
-    } catch (error) {
-        console.error("Error fetching orders:", error);
-        res.status(500).send('Internal Server Error');
+        console.error('Error clearing cart:', error);
+        res.status(500).json({ error: 'Failed to clear cart' });
     }
 });
 
 app.use(express.static('public'));
 
-startServer();
+app.listen(PORT, () => {
+    console.log(`Server is running at http://localhost:${PORT}`);
+});
