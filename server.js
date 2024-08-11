@@ -1,3 +1,4 @@
+//server.js
 const express = require('express');
 const axios = require('axios');
 const multer = require('multer');
@@ -41,9 +42,50 @@ const cardSchema = new mongoose.Schema({
 
 const Card = mongoose.model('Card', cardSchema);
 
+// Определение схемы и модели для заказов
+const orderSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    address: { type: String, required: true },
+    phone: { type: String, required: true },
+    additionalInfo: { type: String },
+    items: [{ 
+        title: String, 
+        details: String, 
+        price: String, 
+        image: String, 
+        quantity: Number 
+    }],
+    message: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
+});
+
+const Order = mongoose.model('Order', orderSchema);
+
+// Маршрут для добавления тестового элемента в коллекцию Card
+app.get('/api/test-add-item', async (req, res) => {
+    try {
+        const testItem = new Card({
+            title: 'Test Sushi Set',
+            details: 'This is a test sushi set',
+            price: '100 zł',
+            image: 'images/test-image.webp',
+            quantity: 1
+        });
+
+        await testItem.save();
+
+        console.log('Test item added:', testItem);
+
+        res.status(200).json({ message: 'Test item added successfully', item: testItem });
+    } catch (error) {
+        console.error('Error adding test item:', error);
+        res.status(500).json({ error: 'Failed to add test item' });
+    }
+});
+
 app.post('/api/order', async (req, res) => {
     const order = req.body;
-    console.log('Received order:', JSON.stringify(order, null, 2)); // Лог для отладки
+    console.log('Received order:', JSON.stringify(order, null, 2));
 
     try {
         await sendTelegramMessage(order);
@@ -63,7 +105,7 @@ async function sendTelegramMessage(order) {
         
         if (!fs.existsSync(photoPath)) {
             console.error(`Photo not found: ${photoPath}`);
-            continue; // Пропустить это фото и продолжить с другими
+            continue;
         }
         
         console.log(`Sending photo path: ${photoPath} with caption: ${caption}`);
@@ -76,6 +118,24 @@ async function sendTelegramMessage(order) {
 
     const message = `Новый заказ на суши:\n\nИмя: ${order.name}\nАдрес: ${order.address}\nТелефон: ${order.phone}\nДополнительная информация: ${order.additionalInfo || 'Отсутствует'}\nДетали заказа:\n${orderDetails}`;
 
+    // Сохранение заказа в MongoDB
+    try {
+        const newOrder = new Order({
+            name: order.name,
+            address: order.address,
+            phone: order.phone,
+            additionalInfo: order.additionalInfo,
+            items: order.items,
+            message: message
+        });
+
+        await newOrder.save();
+        console.log("Order saved to MongoDB:", newOrder);
+    } catch (error) {
+        console.error("Error saving order to MongoDB:", error);
+    }
+
+    // Отправка сообщения в Telegram
     const textURL = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
     const textPayload = { chat_id: TELEGRAM_CHANNEL_ID, text: message };
 
@@ -123,10 +183,10 @@ app.post('/api/cart/add', async (req, res) => {
 });
 
 app.get('/api/cart/items', async (req, res) => {
-    console.log('Fetching cart items...'); // Лог начала запроса
+    console.log('Fetching cart items...');
     try {
         const items = await Card.find();
-        console.log('Cart items fetched:', items); // Лог полученных элементов
+        console.log('Cart items fetched:', items);
         res.json(items);
     } catch (error) {
         console.error('Error fetching cart items:', error);
@@ -153,11 +213,12 @@ app.delete('/api/cart/items/:id', async (req, res) => {
     }
 });
 
+// Оставляем функцию очистки корзины, но не вызываем её после обработки заказа
 app.post('/api/cart/clear', async (req, res) => {
-    console.log('Clearing cart...'); // Лог начала очистки корзины
+    console.log('Clearing cart...');
     try {
         await Card.deleteMany({});
-        console.log('Cart cleared successfully'); // Лог успешной очистки корзины
+        console.log('Cart cleared successfully');
         res.status(200).json({ message: 'Cart cleared successfully' });
     } catch (error) {
         console.error('Error clearing cart:', error);
@@ -170,3 +231,4 @@ app.use(express.static('public'));
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
+
