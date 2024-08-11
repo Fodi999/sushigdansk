@@ -14,10 +14,10 @@ const app = express();
 app.use(express.json());
 const upload = multer({ dest: 'public/images/' });
 
-const { TELEGRAM_TOKEN, TELEGRAM_CHANNEL_ID, MONGODB_URI, PORT = 8080 } = process.env;
+const { TELEGRAM_TOKEN, TELEGRAM_CHANNEL_ID, TELEGRAM_TOKEN_2, TELEGRAM_CHANNEL_ID_2, MONGODB_URI, PORT = 8080 } = process.env;
 
-if (!TELEGRAM_TOKEN || !TELEGRAM_CHANNEL_ID || !MONGODB_URI) {
-    console.error('TELEGRAM_TOKEN, TELEGRAM_CHANNEL_ID и MONGODB_URI должны быть указаны в .env файле');
+if (!TELEGRAM_TOKEN || !TELEGRAM_CHANNEL_ID || !TELEGRAM_TOKEN_2 || !TELEGRAM_CHANNEL_ID_2 || !MONGODB_URI) {
+    console.error('Все необходимые переменные окружения должны быть указаны в .env файле');
     process.exit(1);
 }
 
@@ -60,28 +60,6 @@ const orderSchema = new mongoose.Schema({
 });
 
 const Order = mongoose.model('Order', orderSchema);
-
-// Маршрут для добавления тестового элемента в коллекцию Card
-app.get('/api/test-add-item', async (req, res) => {
-    try {
-        const testItem = new Card({
-            title: 'Test Sushi Set',
-            details: 'This is a test sushi set',
-            price: '100 zł',
-            image: 'images/test-image.webp',
-            quantity: 1
-        });
-
-        await testItem.save();
-
-        console.log('Test item added:', testItem);
-
-        res.status(200).json({ message: 'Test item added successfully', item: testItem });
-    } catch (error) {
-        console.error('Error adding test item:', error);
-        res.status(500).json({ error: 'Failed to add test item' });
-    }
-});
 
 app.post('/api/order', async (req, res) => {
     const order = req.body;
@@ -135,34 +113,82 @@ async function sendTelegramMessage(order) {
         console.error("Error saving order to MongoDB:", error);
     }
 
-    // Отправка сообщения в Telegram
-    const textURL = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-    const textPayload = { chat_id: TELEGRAM_CHANNEL_ID, text: message };
+    // Отправка сообщения первому боту
+    const textURL1 = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+    const textPayload1 = { chat_id: TELEGRAM_CHANNEL_ID, text: message };
 
     try {
-        const textResp = await axios.post(textURL, textPayload);
-        console.log("Text message response:", textResp.data);
+        const textResp1 = await axios.post(textURL1, textPayload1);
+        console.log("Text message response from bot 1:", textResp1.data);
     } catch (error) {
-        console.error("Error sending text message:", error);
+        console.error("Error sending text message to bot 1:", error);
         throw error;
+    }
+
+    // Создание файла с данными заказа
+    const filePath = path.join(__dirname, `order_${Date.now()}.txt`);
+    const fileContent = `Имя: ${order.name}\nАдрес: ${order.address}\nТелефон: ${order.phone}\nДополнительная информация: ${order.additionalInfo || 'Отсутствует'}`;
+
+    try {
+        fs.writeFileSync(filePath, fileContent);
+        console.log("Order file created:", filePath);
+    } catch (error) {
+        console.error("Error creating order file:", error);
+        throw error;
+    }
+
+    // Отправка файла второму боту
+    const fileURL = `https://api.telegram.org/bot${TELEGRAM_TOKEN_2}/sendDocument`;
+    const formData = new FormData();
+    formData.append('chat_id', TELEGRAM_CHANNEL_ID_2);
+    formData.append('document', fs.createReadStream(filePath));
+
+    try {
+        const fileResp = await axios.post(fileURL, formData, {
+            headers: formData.getHeaders()
+        });
+        console.log("File sent to bot 2:", fileResp.data);
+    } catch (error) {
+        console.error("Error sending file to bot 2:", error);
+        throw error;
+    } finally {
+        // Удаление файла после отправки
+        fs.unlinkSync(filePath);
+        console.log("Order file deleted:", filePath);
     }
 }
 
 async function sendTelegramPhoto(photoPath, caption) {
-    const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`;
+    const url1 = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`;
+    const url2 = `https://api.telegram.org/bot${TELEGRAM_TOKEN_2}/sendPhoto`;
 
-    const formData = new FormData();
-    formData.append('chat_id', TELEGRAM_CHANNEL_ID);
-    formData.append('caption', caption);
-    formData.append('photo', fs.createReadStream(photoPath));
+    const formData1 = new FormData();
+    formData1.append('chat_id', TELEGRAM_CHANNEL_ID);
+    formData1.append('caption', caption);
+    formData1.append('photo', fs.createReadStream(photoPath));
+
+    const formData2 = new FormData();
+    formData2.append('chat_id', TELEGRAM_CHANNEL_ID_2);
+    formData2.append('caption', caption);
+    formData2.append('photo', fs.createReadStream(photoPath));
 
     try {
-        const response = await axios.post(url, formData, {
-            headers: formData.getHeaders()
+        const response1 = await axios.post(url1, formData1, {
+            headers: formData1.getHeaders()
         });
-        console.log("Photo response:", response.data);
+        console.log("Photo response from bot 1:", response1.data);
     } catch (error) {
-        console.error("Error sending photo:", error);
+        console.error("Error sending photo to bot 1:", error);
+        throw error;
+    }
+
+    try {
+        const response2 = await axios.post(url2, formData2, {
+            headers: formData2.getHeaders()
+        });
+        console.log("Photo response from bot 2:", response2.data);
+    } catch (error) {
+        console.error("Error sending photo to bot 2:", error);
         throw error;
     }
 }
@@ -231,4 +257,5 @@ app.use(express.static('public'));
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
+
 
