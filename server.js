@@ -77,6 +77,7 @@ app.post('/api/order', async (req, res) => {
 async function sendTelegramMessage(order) {
     console.log("Sending photos to Telegram...");
 
+    // Отправка фотографий только первому боту
     for (const item of order.items) {
         const caption = item.title;
         const photoPath = path.join(__dirname, 'public', 'images', path.basename(item.image));
@@ -87,7 +88,7 @@ async function sendTelegramMessage(order) {
         }
         
         console.log(`Sending photo path: ${photoPath} with caption: ${caption}`);
-        await sendTelegramPhoto(photoPath, caption);
+        await sendTelegramPhotoToFirstBot(photoPath, caption);
     }
 
     const orderDetails = order.items.map(item => (
@@ -113,7 +114,7 @@ async function sendTelegramMessage(order) {
         console.error("Error saving order to MongoDB:", error);
     }
 
-    // Отправка сообщения первому боту
+    // Отправка текстового сообщения первому боту
     const textURL1 = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
     const textPayload1 = { chat_id: TELEGRAM_CHANNEL_ID, text: message };
 
@@ -137,7 +138,7 @@ async function sendTelegramMessage(order) {
         throw error;
     }
 
-    // Отправка файла второму боту
+    // Отправка файла второму боту (только файл, без фотографий)
     const fileURL = `https://api.telegram.org/bot${TELEGRAM_TOKEN_2}/sendDocument`;
     const formData = new FormData();
     formData.append('chat_id', TELEGRAM_CHANNEL_ID_2);
@@ -158,19 +159,14 @@ async function sendTelegramMessage(order) {
     }
 }
 
-async function sendTelegramPhoto(photoPath, caption) {
+// Отправка фотографий только первому боту
+async function sendTelegramPhotoToFirstBot(photoPath, caption) {
     const url1 = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`;
-    const url2 = `https://api.telegram.org/bot${TELEGRAM_TOKEN_2}/sendPhoto`;
 
     const formData1 = new FormData();
     formData1.append('chat_id', TELEGRAM_CHANNEL_ID);
     formData1.append('caption', caption);
     formData1.append('photo', fs.createReadStream(photoPath));
-
-    const formData2 = new FormData();
-    formData2.append('chat_id', TELEGRAM_CHANNEL_ID_2);
-    formData2.append('caption', caption);
-    formData2.append('photo', fs.createReadStream(photoPath));
 
     try {
         const response1 = await axios.post(url1, formData1, {
@@ -179,16 +175,6 @@ async function sendTelegramPhoto(photoPath, caption) {
         console.log("Photo response from bot 1:", response1.data);
     } catch (error) {
         console.error("Error sending photo to bot 1:", error);
-        throw error;
-    }
-
-    try {
-        const response2 = await axios.post(url2, formData2, {
-            headers: formData2.getHeaders()
-        });
-        console.log("Photo response from bot 2:", response2.data);
-    } catch (error) {
-        console.error("Error sending photo to bot 2:", error);
         throw error;
     }
 }
@@ -257,5 +243,6 @@ app.use(express.static('public'));
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
+
 
 
