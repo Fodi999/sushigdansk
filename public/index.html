@@ -102,29 +102,24 @@
         <div class="indicator"></div>
     </div>
 
-    <!-- Модальное окно чата -->
-    <div id="chat-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" id="close-chat-modal">&times;</span>
-            <h2>Чат</h2>
-            <div id="chat-content">
-                <!-- Ссылки на социальные сети и мессенджеры -->
-                <p>Свяжитесь с нами:</p>
-                <a href="https://www.instagram.com/your_instagram_handle" target="_blank">
-                    <i class='bx bxl-instagram'></i> Instagram
-                </a>
-                <a href="https://t.me/your_telegram_handle" target="_blank">
-                    <i class='bx bxl-telegram'></i> Telegram
-                </a>
-                <a href="https://wa.me/your_whatsapp_number" target="_blank">
-                    <i class='bx bxl-whatsapp'></i> WhatsApp
-                </a>
-                <a href="https://www.facebook.com/your_facebook_handle" target="_blank">
-                    <i class='bx bxl-facebook'></i> Facebook
-                </a>
-            </div>
+<!-- Модальное окно чата -->
+<div id="chat-modal" class="modal">
+    <div class="modal-content">
+        <!-- Кнопка для закрытия модального окна -->
+        <span class="close-button" id="close-chat-modal">&times;</span>
+        <h2>Чат</h2>
+        
+        <!-- Контейнер для сообщений чата -->
+        <div id="chat-content" style="max-height: 400px; overflow-y: auto; padding: 10px;">
+            <!-- Сюда будут добавляться сообщения из Telegram -->
+            <div id="chatMessages" class="chat-messages-container"></div>
+
         </div>
+       
     </div>
+</div>
+
+
 
     <!-- Модальное окно корзины -->
     <div id="cart-modal" class="modal">
@@ -188,43 +183,67 @@
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+
+    <script src="/socket.io/socket.io.js"></script>
     <script>
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', function() {
-            navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-              console.log('Service Worker registered with scope:', registration.scope);
-            }, function(err) {
-              console.log('Service Worker registration failed:', err);
-            });
-          });
+document.addEventListener('DOMContentLoaded', () => {
+    const socket = io();
+
+    // Загрузка истории сообщений при подключении
+    socket.on('chat history', function (messages) {
+        messages.forEach(message => {
+            addMessageToChat(message);
+        });
+    });
+
+    // Слушаем событие добавления сообщений в чат
+    socket.on('chat message', function (msg) {
+        addMessageToChat(msg);
+    });
+
+    function addMessageToChat({ text, imageUrl }) {
+        const chatMessages = document.getElementById('chatMessages');
+        if (chatMessages) {
+            // Создаем карточку сообщения
+            const messageCard = document.createElement('div');
+            messageCard.className = 'message-card';
+
+            // Добавляем текст сообщения
+            if (text) {
+                const messageText = document.createElement('div');
+                messageText.className = 'message-text';
+                messageText.textContent = text;
+                messageCard.appendChild(messageText);
+            }
+
+            // Добавляем изображение, если оно есть
+            if (imageUrl) {
+                const messageImage = document.createElement('img');
+                messageImage.className = 'message-image';
+                messageImage.src = imageUrl;  // Устанавливаем URL изображения
+                messageCard.appendChild(messageImage);
+            }
+
+            // Добавляем отметку времени
+            const messageTimestamp = document.createElement('div');
+            messageTimestamp.className = 'message-timestamp';
+            messageTimestamp.textContent = new Date().toLocaleTimeString(); // Добавляем время
+            messageCard.appendChild(messageTimestamp);
+
+            // Добавляем карточку в контейнер сообщений
+            chatMessages.appendChild(messageCard);
+        } else {
+            console.error("Элемент #chatMessages не найден на странице.");
         }
+    }
+});
+
     </script>
+      
+
+
+    
+    
+    
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

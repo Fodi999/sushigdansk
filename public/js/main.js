@@ -163,14 +163,3 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log(`Время доставки: ${deliveryTimeMinutes.toFixed(2)} минут`);
     }
 });
-
-
-
-
-
-
-
-
-
-
-
