@@ -57,6 +57,7 @@ mongoose.connect(MONGODB_URI)
 const messageSchema = new mongoose.Schema({
     text: { type: String },
     imageUrl: { type: String },
+    likes: { type: Number, default: 0 }, // Поле для лайков
     timestamp: { type: Date, default: Date.now }
 });
 
@@ -100,6 +101,25 @@ app.get('/api/messages', async (req, res) => {
     } catch (error) {
         console.error('Ошибка получения сообщений:', error);
         res.status(500).json({ error: 'Не удалось получить сообщения' });
+    }
+});
+
+// Маршрут для добавления лайка к сообщению
+app.post('/api/messages/:id/like', async (req, res) => {
+    const { id } = req.params;
+    try {
+        // Находим сообщение по ID и увеличиваем количество лайков
+        const message = await Message.findByIdAndUpdate(id, { $inc: { likes: 1 } }, { new: true });
+        if (message) {
+            // Отправляем обновленное количество лайков всем подключенным клиентам через WebSocket
+            io.emit('like update', { id: message._id, likes: message.likes });
+            res.json({ likes: message.likes });
+        } else {
+            res.status(404).json({ error: 'Сообщение не найдено' });
+        }
+    } catch (error) {
+        console.error('Ошибка при добавлении лайка:', error);
+        res.status(500).json({ error: 'Не удалось поставить лайк' });
     }
 });
 
@@ -238,7 +258,8 @@ async function sendDocumentMessage(token, chatId, filePath) {
 bot3.on('message', async (msg) => {
     let messageData = {
         text: msg.caption || msg.text || '',  // Текст из caption (если это фото) или текст сообщения
-        imageUrl: ''
+        imageUrl: '',
+        likes: 0 // Инициализация количества лайков
     };
 
     // Проверяем наличие фото в сообщении
@@ -263,12 +284,13 @@ bot3.on('message', async (msg) => {
         // Сохраняем сообщение в MongoDB
         const newMessage = new Message({
             text: messageData.text,
-            imageUrl: messageData.imageUrl
+            imageUrl: messageData.imageUrl,
+            likes: messageData.likes
         });
         await newMessage.save();
 
         // Передаем сообщение на сайт через WebSocket
-        io.emit('chat message', messageData);
+        io.emit('chat message', newMessage);
     } catch (error) {
         console.error('Ошибка сохранения сообщения:', error);
     }
@@ -351,6 +373,15 @@ app.use(express.static('public'));
 server.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
+
+
+
+
+
+
+
+
+
 
 
 

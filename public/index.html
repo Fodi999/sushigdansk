@@ -186,59 +186,89 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const socket = io();
-
-    // Загрузка истории сообщений при подключении
-    socket.on('chat history', function (messages) {
-        messages.forEach(message => {
-            addMessageToChat(message);
+        document.addEventListener('DOMContentLoaded', () => {
+            const socket = io();
+        
+            // Загрузка истории сообщений при подключении
+            socket.on('chat history', function (messages) {
+                messages.forEach(message => {
+                    addMessageToChat(message);
+                });
+            });
+        
+            // Слушаем событие добавления сообщений в чат
+            socket.on('chat message', function (msg) {
+                addMessageToChat(msg);
+            });
+        
+            // Слушаем событие обновления лайков
+            socket.on('like update', function ({ id, likes }) {
+                const likeButton = document.querySelector(`.like-button[data-id="${id}"]`);
+                if (likeButton) {
+                    likeButton.textContent = `👍 ${likes}`;
+                }
+            });
+        
+            // Функция для добавления сообщения в чат
+            function addMessageToChat({ _id, text, imageUrl, likes }) {
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    // Создаем карточку сообщения
+                    const messageCard = document.createElement('div');
+                    messageCard.className = 'message-card';
+        
+                    // Добавляем текст сообщения
+                    if (text) {
+                        const messageText = document.createElement('div');
+                        messageText.className = 'message-text';
+                        messageText.textContent = text;
+                        messageCard.appendChild(messageText);
+                    }
+        
+                    // Добавляем изображение, если оно есть
+                    if (imageUrl) {
+                        const messageImage = document.createElement('img');
+                        messageImage.className = 'message-image';
+                        messageImage.src = imageUrl;  // Устанавливаем URL изображения
+                        messageCard.appendChild(messageImage);
+                    }
+        
+                    // Добавляем отметку времени
+                    const messageTimestamp = document.createElement('div');
+                    messageTimestamp.className = 'message-timestamp';
+                    messageTimestamp.textContent = new Date().toLocaleTimeString(); // Добавляем время
+                    messageCard.appendChild(messageTimestamp);
+        
+                    // Добавляем кнопку лайка
+                    const likeButton = document.createElement('button');
+                    likeButton.className = 'like-button';
+                    likeButton.textContent = `👍 ${likes || 0}`;
+                    likeButton.setAttribute('data-id', _id); // Привязка ID сообщения к кнопке
+                    likeButton.addEventListener('click', () => likeMessage(_id, likeButton));
+                    messageCard.appendChild(likeButton);
+        
+                    // Добавляем карточку в контейнер сообщений
+                    chatMessages.appendChild(messageCard);
+                } else {
+                    console.error("Элемент #chatMessages не найден на странице.");
+                }
+            }
+        
+            // Функция для обработки лайков
+            async function likeMessage(messageId, likeButton) {
+                try {
+                    const response = await fetch(`/api/messages/${messageId}/like`, {
+                        method: 'POST'
+                    });
+                    const data = await response.json();
+                    likeButton.textContent = `👍 ${data.likes}`; // Обновляем количество лайков на кнопке
+                } catch (error) {
+                    console.error('Ошибка при отправке лайка:', error);
+                }
+            }
         });
-    });
-
-    // Слушаем событие добавления сообщений в чат
-    socket.on('chat message', function (msg) {
-        addMessageToChat(msg);
-    });
-
-    function addMessageToChat({ text, imageUrl }) {
-        const chatMessages = document.getElementById('chatMessages');
-        if (chatMessages) {
-            // Создаем карточку сообщения
-            const messageCard = document.createElement('div');
-            messageCard.className = 'message-card';
-
-            // Добавляем текст сообщения
-            if (text) {
-                const messageText = document.createElement('div');
-                messageText.className = 'message-text';
-                messageText.textContent = text;
-                messageCard.appendChild(messageText);
-            }
-
-            // Добавляем изображение, если оно есть
-            if (imageUrl) {
-                const messageImage = document.createElement('img');
-                messageImage.className = 'message-image';
-                messageImage.src = imageUrl;  // Устанавливаем URL изображения
-                messageCard.appendChild(messageImage);
-            }
-
-            // Добавляем отметку времени
-            const messageTimestamp = document.createElement('div');
-            messageTimestamp.className = 'message-timestamp';
-            messageTimestamp.textContent = new Date().toLocaleTimeString(); // Добавляем время
-            messageCard.appendChild(messageTimestamp);
-
-            // Добавляем карточку в контейнер сообщений
-            chatMessages.appendChild(messageCard);
-        } else {
-            console.error("Элемент #chatMessages не найден на странице.");
-        }
-    }
-});
-
-    </script>
+        </script>
+        
       
 
 
