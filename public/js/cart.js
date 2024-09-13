@@ -1,3 +1,5 @@
+'use strict';
+
 import { logMessage } from './logger.js';
 
 export function addItemToCart(item) {
@@ -112,7 +114,7 @@ export function removeItemFromCart(itemId) {
     });
 }
 
-export function clearCart() {  // Теперь эта функция экспортируется
+export function clearCart() {
     fetch("/api/cart/clear", {
         method: "POST"
     })
@@ -129,14 +131,3 @@ export function clearCart() {  // Теперь эта функция экспо�
         console.error("Error:", error);
     });
 }
-
-
-
-
-
-
-
-
-
-
-

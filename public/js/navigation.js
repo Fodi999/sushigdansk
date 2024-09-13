@@ -1,7 +1,13 @@
-//js/navigation.js
+ 'use strict';
+
 export function setupNavigation() {
     const listItems = document.querySelectorAll('.navigation .list');
     const indicator = document.querySelector('.navigation .indicator');
+
+    if (!listItems.length || !indicator) {
+        console.error("Не удалось найти элементы навигации или индикатор.");
+        return;
+    }
 
     function updateActiveItem() {
         listItems.forEach(item => item.classList.remove('active'));

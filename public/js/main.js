@@ -1,13 +1,21 @@
+'use strict';
+
 import { cardsDataRow1, cardsDataRow2, cardsDataRow3, cardsDataRow4, createCard } from './cards.js';
 import { addItemToCart, getCartItems } from './cart.js';
 import { setupCheckoutForm } from './checkout.js';
 import { setupNavigation } from './navigation.js';
+import './chat.js'; // Подключаем функционал чата
 
 document.addEventListener("DOMContentLoaded", function() {
     const cardContainerRow1 = document.getElementById("card-container-row-1");
     const cardContainerRow2 = document.getElementById("card-container-row-2");
     const cardContainerRow3 = document.getElementById("card-container-row-3");
     const cardContainerRow4 = document.getElementById("card-container-row-4");
+
+    if (!cardContainerRow1 || !cardContainerRow2 || !cardContainerRow3 || !cardContainerRow4) {
+        console.error("Не удалось найти контейнеры для карточек.");
+        return;
+    }
 
     cardsDataRow1.forEach(card => {
         const cardElement = createCard(card, addItemToCart);
@@ -29,58 +37,76 @@ document.addEventListener("DOMContentLoaded", function() {
         cardContainerRow4.appendChild(cardElement);
     });
 
-    document.getElementById("cart-button").addEventListener("click", function() {
+    const cartButton = document.getElementById("cart-button");
+    const closeModalButton = document.getElementById("close-modal");
+    const checkoutButton = document.getElementById("checkout-button");
+    const closeCheckoutModalButton = document.getElementById("close-checkout-modal");
+
+    if (!cartButton || !closeModalButton || !checkoutButton || !closeCheckoutModalButton) {
+        console.error("Не удалось найти элементы управления корзиной и оформлением заказа.");
+        return;
+    }
+
+    cartButton.addEventListener("click", function() {
         getCartItems();
         document.getElementById("cart-modal").style.display = "flex";
     });
 
-    document.getElementById("close-modal").addEventListener("click", function() {
+    closeModalButton.addEventListener("click", function() {
         document.getElementById("cart-modal").style.display = "none";
     });
 
-    document.getElementById("checkout-button").addEventListener("click", function() {
+    checkoutButton.addEventListener("click", function() {
         document.getElementById("cart-modal").style.display = "none";
         document.getElementById("checkout-modal").style.display = "flex";
     });
 
-    document.getElementById("close-checkout-modal").addEventListener("click", function() {
+    closeCheckoutModalButton.addEventListener("click", function() {
         document.getElementById("checkout-modal").style.display = "none";
     });
 
     setupCheckoutForm();
-    setupNavigation(); // Инициализация навигации
+    setupNavigation();
 
-    // Добавляем обработчик для кнопки "Доставка"
-    document.getElementById("delivery-button").addEventListener("click", function() {
-        document.getElementById("delivery-modal").style.display = "flex";
-        initializeMap(); // Инициализация карты при открытии модального окна
-    });
+    const deliveryButton = document.getElementById("delivery-button");
+    const closeDeliveryModalButton = document.getElementById("close-delivery-modal");
 
-    document.getElementById("close-delivery-modal").addEventListener("click", function() {
-        document.getElementById("delivery-modal").style.display = "none";
-    });
+    if (deliveryButton && closeDeliveryModalButton) {
+        deliveryButton.addEventListener("click", function() {
+            document.getElementById("delivery-modal").style.display = "flex";
+            initializeMap();
+        });
 
-    // Добавляем обработчик для кнопки "Чат"
-    document.querySelector("li.list:nth-child(5) a").addEventListener("click", function() {
-        document.getElementById("chat-modal").style.display = "flex";
-    });
+        closeDeliveryModalButton.addEventListener("click", function() {
+            document.getElementById("delivery-modal").style.display = "none";
+        });
+    }
 
-    document.getElementById("close-chat-modal").addEventListener("click", function() {
-        document.getElementById("chat-modal").style.display = "none";
-    });
+    const chatLink = document.querySelector("li.list:nth-child(5) a");
+    const closeChatModalButton = document.getElementById("close-chat-modal");
 
-    let map; // Переменная для хранения объекта карты
+    if (chatLink && closeChatModalButton) {
+        chatLink.addEventListener("click", function() {
+            document.getElementById("chat-modal").style.display = "flex";
+        });
+
+        closeChatModalButton.addEventListener("click", function() {
+            document.getElementById("chat-modal").style.display = "none";
+        });
+    }
+
+    let map;
 
     function initializeMap() {
         if (map) {
-            map.remove(); // Удаление существующей карты
+            map.remove();
         }
 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 const userLat = position.coords.latitude;
                 const userLng = position.coords.longitude;
-                console.log(`User location: ${userLat}, ${userLng}`); // Логирование координат пользователя
+                console.log(`User location: ${userLat}, ${userLng}`);
 
                 map = L.map('delivery-map').setView([userLat, userLng], 12);
 
@@ -92,32 +118,17 @@ document.addEventListener("DOMContentLoaded", function() {
                     .bindPopup('Вы здесь.')
                     .openPopup();
 
-                // Координаты ресторана
-                const restaurantCoords = [54.3521, 18.6466]; // Гданьск
-
-                // Добавляем маркер ресторана
+                const restaurantCoords = [54.3521, 18.6466];
                 L.marker(restaurantCoords).addTo(map)
                     .bindPopup('Ресторан')
                     .openPopup();
 
-                // Рассчитываем и выводим время доставки
                 calculateDeliveryTime(userLat, userLng, restaurantCoords);
             }, function(error) {
                 console.error('Error occurred. Error code: ' + error.code);
-                // Обработка ошибок
-                if (error.code === error.PERMISSION_DENIED) {
-                    console.log("User denied the request for Geolocation.");
-                } else if (error.code === error.POSITION_UNAVAILABLE) {
-                    console.log("Location information is unavailable.");
-                } else if (error.code === error.TIMEOUT) {
-                    console.log("The request to get user location timed out.");
-                } else {
-                    console.log("An unknown error occurred.");
-                }
                 handleLocationError();
             });
         } else {
-            // Браузер не поддерживает геолокацию
             console.log("Geolocation is not supported by this browser.");
             handleLocationError();
         }
@@ -125,11 +136,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function handleLocationError() {
         if (map) {
-            map.remove(); // Удаление существующей карты
+            map.remove();
         }
 
-        const defaultLat = 54.3521; // Широта Гданьска
-        const defaultLng = 18.6466; // Долгота Гданьска
+        const defaultLat = 54.3521;
+        const defaultLng = 18.6466;
         map = L.map('delivery-map').setView([defaultLat, defaultLng], 12);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -142,24 +153,19 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function calculateDeliveryTime(userLat, userLng, restaurantCoords) {
-        const R = 6371; // Радиус Земли в километрах
+        const R = 6371;
         const dLat = (restaurantCoords[0] - userLat) * Math.PI / 180;
         const dLng = (restaurantCoords[1] - userLng) * Math.PI / 180;
-        const a = 
-            Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(userLat * Math.PI / 180) * Math.cos(restaurantCoords[0] * Math.PI / 180) * 
-            Math.sin(dLng/2) * Math.sin(dLng/2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        const distance = R * c; // Расстояние в километрах
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(userLat * Math.PI / 180) * Math.cos(restaurantCoords[0] * Math.PI / 180) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c;
 
-        // Предположим средняя скорость доставки 50 км/ч
         const averageSpeed = 50;
         const deliveryTimeHours = distance / averageSpeed;
-
-        // Конвертируем время доставки в минуты
         const deliveryTimeMinutes = deliveryTimeHours * 60;
 
-        // Вывод времени доставки
         console.log(`Время доставки: ${deliveryTimeMinutes.toFixed(2)} минут`);
     }
 });

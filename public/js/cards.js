@@ -1,3 +1,5 @@
+'use strict';
+//js/cards.js
 export const cardsDataRow1 = [
     { title: "Najlepszy zestaw Filadelfii", details: "930 грамов, 32 sztuki", price: "240 zł", image: "images/Rectangle-3.webp" },
     { title: "Zestaw California", details: "800 грамов, 28 sztуки", price: "220 zł", image: "images/Rectangle-3.webp" },
@@ -64,7 +66,7 @@ export function createCard(card, addItemToCart) {
     const decreaseButton = document.createElement("button");
     decreaseButton.className = "quantity-button";
     decreaseButton.innerHTML = '<ion-icon name="remove-circle-outline"></ion-icon>';
-    decreaseButton.addEventListener("click", function() {
+    decreaseButton.addEventListener("click", () => {
         if (quantityInput.value > 1) {
             quantityInput.value = parseInt(quantityInput.value) - 1;
         }
@@ -78,7 +80,7 @@ export function createCard(card, addItemToCart) {
     const increaseButton = document.createElement("button");
     increaseButton.className = "quantity-button";
     increaseButton.innerHTML = '<ion-icon name="add-circle-outline"></ion-icon>';
-    increaseButton.addEventListener("click", function() {
+    increaseButton.addEventListener("click", () => {
         quantityInput.value = parseInt(quantityInput.value) + 1;
     });
 
@@ -90,7 +92,7 @@ export function createCard(card, addItemToCart) {
     buttonElement.className = "order-button";
     buttonElement.textContent = "Chcieć";
 
-    buttonElement.addEventListener("click", function() {
+    buttonElement.addEventListener("click", () => {
         const itemWithQuantity = {
             ...card,
             quantity: parseInt(quantityInput.value)
@@ -109,4 +111,3 @@ export function createCard(card, addItemToCart) {
 
     return cardElement;
 }
-

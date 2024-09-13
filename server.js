@@ -1,4 +1,5 @@
- //server.js
+'use strict';
+
 // Импорт необходимых модулей
 const express = require('express');
 const axios = require('axios');
@@ -7,17 +8,17 @@ const path = require('path');
 const fs = require('fs');
 const FormData = require('form-data');
 const mongoose = require('mongoose');
-const http = require('http');  // Для WebSocket-сервера
-const { Server } = require('socket.io');  // WebSocket библиотека
+const http = require('http'); // Для WebSocket-сервера
+const { Server } = require('socket.io'); // WebSocket библиотека
 const TelegramBot = require('node-telegram-bot-api'); // Telegram Bot API
-require('dotenv').config();  // Для работы с переменными окружения
+require('dotenv').config(); // Для работы с переменными окружения
 
 console.log('Starting server...');
 
 // Создаем приложение Express
 const app = express();
-const server = http.createServer(app);  // Создаем HTTP сервер для работы с WebSocket
-const io = new Server(server);  // Инициализируем WebSocket сервер
+const server = http.createServer(app); // Создаем HTTP сервер для работы с WebSocket
+const io = new Server(server); // Инициализируем WebSocket сервер
 
 // Миддлвары
 app.use(express.json());
@@ -25,93 +26,89 @@ const upload = multer({ dest: 'public/images/' });
 
 // Инициализация переменных окружения
 const {
-    TELEGRAM_TOKEN, 
-    TELEGRAM_CHANNEL_ID, 
-    TELEGRAM_TOKEN_2, 
-    TELEGRAM_CHANNEL_ID_2, 
-    TELEGRAM_TOKEN_3, 
-    TELEGRAM_CHANNEL_ID_3, 
-    MONGODB_URI, 
-    PORT = 8080 
+    TELEGRAM_TOKEN,
+    TELEGRAM_CHANNEL_ID,
+    TELEGRAM_TOKEN_2,
+    TELEGRAM_CHANNEL_ID_2,
+    TELEGRAM_TOKEN_3,
+    TELEGRAM_CHANNEL_ID_3,
+    MONGODB_URI,
+    PORT = 8080
 } = process.env;
 
-if (!TELEGRAM_TOKEN || !TELEGRAM_CHANNEL_ID || !TELEGRAM_TOKEN_2 || !TELEGRAM_CHANNEL_ID_2 || !TELEGRAM_TOKEN_3 || !TELEGRAM_CHANNEL_ID_3 || !MONGODB_URI) {
+if (
+    !TELEGRAM_TOKEN || !TELEGRAM_CHANNEL_ID ||
+    !TELEGRAM_TOKEN_2 || !TELEGRAM_CHANNEL_ID_2 ||
+    !TELEGRAM_TOKEN_3 || !TELEGRAM_CHANNEL_ID_3 ||
+    !MONGODB_URI
+) {
     console.error('Все необходимые переменные окружения должны быть указаны в .env файле');
     process.exit(1);
 }
 
 // Инициализация ботов Telegram
-const bot3 = new TelegramBot(TELEGRAM_TOKEN_3, { polling: true });  // Для работы с третьим ботом
+const bot3 = new TelegramBot(TELEGRAM_TOKEN_3, { polling: true });
 
-// Подключение к MongoDB
+// Подключение к MongoDB (без устаревших опций)
 mongoose.connect(MONGODB_URI)
-    .then(() => {
-        console.log('Successfully connected to MongoDB with Mongoose');
-    })
-    .catch((error) => {
+    .then(() => console.log('Successfully connected to MongoDB'))
+    .catch(error => {
         console.error('Could not connect to MongoDB:', error);
         process.exit(1);
     });
 
-// Определение схемы для сообщений
+// Определение схем для MongoDB
 const messageSchema = new mongoose.Schema({
     text: { type: String },
     imageUrl: { type: String },
-    likes: { type: Number, default: 0 }, // Поле для лайков
+    likes: { type: Number, default: 0 },
     timestamp: { type: Date, default: Date.now }
 });
-
 const Message = mongoose.model('Message', messageSchema);
 
-// Определение схемы и модели для карточек товаров
 const cardSchema = new mongoose.Schema({
     title: { type: String, required: true },
     details: { type: String, required: true },
     price: { type: String, required: true },
     image: { type: String, required: true },
-    quantity: { type: Number, required: true },
+    quantity: { type: Number, required: true }
 }, { timestamps: true });
-
 const Card = mongoose.model('Card', cardSchema);
 
-// Определение схемы и модели для заказов
 const orderSchema = new mongoose.Schema({
     name: { type: String, required: true },
     address: { type: String, required: true },
     phone: { type: String, required: true },
     additionalInfo: { type: String },
-    items: [{ 
-        title: String, 
-        details: String, 
-        price: String, 
-        image: String, 
-        quantity: Number 
+    items: [{
+        title: String,
+        details: String,
+        price: String,
+        image: String,
+        quantity: Number
     }],
     message: { type: String, required: true },
     createdAt: { type: Date, default: Date.now }
 });
-
 const Order = mongoose.model('Order', orderSchema);
 
-// Маршрут для получения всех сообщений из базы данных
+// Маршрут для получения всех сообщений
 app.get('/api/messages', async (req, res) => {
     try {
         const messages = await Message.find().sort({ timestamp: 1 });
-        res.json(messages);  // Отправка сообщений в формате JSON
+        res.json(messages);
     } catch (error) {
         console.error('Ошибка получения сообщений:', error);
         res.status(500).json({ error: 'Не удалось получить сообщения' });
     }
 });
 
-// Маршрут для добавления лайка к сообщению
+// Маршрут для добавления лайка
 app.post('/api/messages/:id/like', async (req, res) => {
     const { id } = req.params;
     try {
-        // Находим сообщение по ID и увеличиваем количество лайков
         const message = await Message.findByIdAndUpdate(id, { $inc: { likes: 1 } }, { new: true });
         if (message) {
-            // Отправляем обновленное количество лайков всем подключенным клиентам через WebSocket
             io.emit('like update', { id: message._id, likes: message.likes });
             res.json({ likes: message.likes });
         } else {
@@ -137,11 +134,10 @@ app.post('/api/order', async (req, res) => {
     }
 });
 
-// Функция для отправки заказов и фото первому и второму ботам
+// Функция для отправки заказов и фото боту
 async function sendTelegramMessage(order) {
     console.log("Начало отправки фотографий и сообщений...");
 
-    // Отправка фотографий первому боту
     for (const item of order.items) {
         const caption = item.title;
         const photoPath = path.join(__dirname, 'public', 'images', path.basename(item.image));
@@ -151,7 +147,6 @@ async function sendTelegramMessage(order) {
             continue;
         }
 
-        console.log(`Отправка фото: ${photoPath} с подписью: ${caption} через бота 1`);
         await sendTelegramPhotoToFirstBot(photoPath, caption);
     }
 
@@ -159,63 +154,31 @@ async function sendTelegramMessage(order) {
         `${item.title} - ${item.details} - ${item.price} - Количество: ${item.quantity}`
     )).join('\n');
 
-    const message = `Новый заказ на суши:\n\nИмя: ${order.name}\nАдрес: ${order.address}\nТелефон: ${order.phone}\nДополнительная информация: ${order.additionalInfo || 'Отсутствует'}\nДетали заказа:\n${orderDetails}`;
+    const message = `Новый заказ на суши:\nИмя: ${order.name}\nАдрес: ${order.address}\nТелефон: ${order.phone}\nДополнительная информация: ${order.additionalInfo || 'Отсутствует'}\nДетали заказа:\n${orderDetails}`;
 
-    // Сохранение заказа в MongoDB
     try {
-        const newOrder = new Order({
-            name: order.name,
-            address: order.address,
-            phone: order.phone,
-            additionalInfo: order.additionalInfo,
-            items: order.items,
-            message: message
-        });
-
+        const newOrder = new Order({ name: order.name, address: order.address, phone: order.phone, additionalInfo: order.additionalInfo, items: order.items, message });
         await newOrder.save();
         console.log("Заказ сохранен в MongoDB:", newOrder);
     } catch (error) {
         console.error("Ошибка сохранения заказа в MongoDB:", error);
     }
 
-    // Отправка текстового сообщения первому боту
-    console.log(`Отправка сообщения первому боту: ${message}`);
     await sendTextMessage(TELEGRAM_TOKEN, TELEGRAM_CHANNEL_ID, message);
-
-    // Создание файла с данными заказа и отправка его второму боту
-    const filePath = path.join(__dirname, `order_${Date.now()}.txt`);
-    const fileContent = `Имя: ${order.name}\nАдрес: ${order.address}\nТелефон: ${order.phone}\nДополнительная информация: ${order.additionalInfo || 'Отсутствует'}`;
-
-    try {
-        fs.writeFileSync(filePath, fileContent);
-        console.log("Файл заказа создан:", filePath);
-    } catch (error) {
-        console.error("Ошибка создания файла заказа:", error);
-        throw error;
-    }
-
-    console.log(`Отправка файла второму боту: ${filePath}`);
-    await sendDocumentMessage(TELEGRAM_TOKEN_2, TELEGRAM_CHANNEL_ID_2, filePath);
-
-    // Удаление файла после отправки
-    fs.unlinkSync(filePath);
-    console.log("Файл заказа удален:", filePath);
 }
 
-// Функция для отправки фотографий первому боту
+// Функция для отправки фото
 async function sendTelegramPhotoToFirstBot(photoPath, caption) {
-    const url1 = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`;
+    const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`;
 
-    const formData1 = new FormData();
-    formData1.append('chat_id', TELEGRAM_CHANNEL_ID);
-    formData1.append('caption', caption);
-    formData1.append('photo', fs.createReadStream(photoPath));
+    const formData = new FormData();
+    formData.append('chat_id', TELEGRAM_CHANNEL_ID);
+    formData.append('caption', caption);
+    formData.append('photo', fs.createReadStream(photoPath));
 
     try {
-        const response1 = await axios.post(url1, formData1, {
-            headers: formData1.getHeaders()
-        });
-        console.log("Ответ от бота 1 по фото:", response1.data);
+        const response = await axios.post(url, formData, { headers: formData.getHeaders() });
+        console.log("Ответ от бота 1 по фото:", response.data);
     } catch (error) {
         console.error("Ошибка отправки фото через бота 1:", error);
         throw error;
@@ -236,71 +199,9 @@ async function sendTextMessage(token, chatId, message) {
     }
 }
 
-// Функция для отправки документов (файлов)
-async function sendDocumentMessage(token, chatId, filePath) {
-    const url = `https://api.telegram.org/bot${token}/sendDocument`;
-    const formData = new FormData();
-    formData.append('chat_id', chatId);
-    formData.append('document', fs.createReadStream(filePath));
-
-    try {
-        const response = await axios.post(url, formData, {
-            headers: formData.getHeaders()
-        });
-        console.log("Файл отправлен:", response.data);
-    } catch (error) {
-        console.error("Ошибка отправки файла:", error);
-        throw error;
-    }
-}
-
-// Обработчик для вебхука от третьего бота (бот 3)
-bot3.on('message', async (msg) => {
-    let messageData = {
-        text: msg.caption || msg.text || '',  // Текст из caption (если это фото) или текст сообщения
-        imageUrl: '',
-        likes: 0 // Инициализация количества лайков
-    };
-
-    // Проверяем наличие фото в сообщении
-    if (msg.photo && msg.photo.length > 0) {
-        const fileId = msg.photo[msg.photo.length - 1].file_id;  // Получаем самое большое изображение
-        try {
-            // Получаем информацию о файле с помощью API Telegram
-            const file = await bot3.getFile(fileId);
-            messageData.imageUrl = `https://api.telegram.org/file/bot${TELEGRAM_TOKEN_3}/${file.file_path}`;
-        } catch (error) {
-            console.error('Ошибка получения URL изображения:', error);
-        }
-    }
-
-    // Проверка на наличие контента
-    if (!messageData.text && !messageData.imageUrl) {
-        console.log('Сообщение не содержит контента.');
-        return;
-    }
-
-    try {
-        // Сохраняем сообщение в MongoDB
-        const newMessage = new Message({
-            text: messageData.text,
-            imageUrl: messageData.imageUrl,
-            likes: messageData.likes
-        });
-        await newMessage.save();
-
-        // Передаем сообщение на сайт через WebSocket
-        io.emit('chat message', newMessage);
-    } catch (error) {
-        console.error('Ошибка сохранения сообщения:', error);
-    }
-});
-
-// Получение всех сообщений при подключении клиента
+// WebSocket логика
 io.on('connection', async (socket) => {
     console.log('Новое подключение WebSocket');
-
-    // Отправляем все сохраненные сообщения клиенту
     const messages = await Message.find().sort({ timestamp: 1 });
     socket.emit('chat history', messages);
 
@@ -309,10 +210,9 @@ io.on('connection', async (socket) => {
     });
 });
 
-// Работа с корзиной через Mongoose (без отправки на бот 3)
+// Маршруты для работы с корзиной
 app.post('/api/cart/add', async (req, res) => {
     const { title, details, price, image, quantity } = req.body;
-
     try {
         const card = new Card({ title, details, price, image, quantity });
         await card.save();
@@ -324,10 +224,8 @@ app.post('/api/cart/add', async (req, res) => {
 });
 
 app.get('/api/cart/items', async (req, res) => {
-    console.log('Fetching cart items...');
     try {
         const items = await Card.find();
-        console.log('Cart items fetched:', items);
         res.json(items);
     } catch (error) {
         console.error('Ошибка получения карточек корзины:', error);
@@ -337,14 +235,10 @@ app.get('/api/cart/items', async (req, res) => {
 
 app.delete('/api/cart/items/:id', async (req, res) => {
     const { id } = req.params;
-    console.log(`Received request to delete item with id: ${id}`);
-
     try {
         const result = await Card.deleteOne({ _id: id });
-
         if (result.deletedCount > 0) {
-            console.log(`Карточка с id: ${id} успешно удалена из корзины.`);
-            res.status(200).json({ message: `Карточка с id ${id} успешно удалена из корзины` });
+            res.status(200).json({ message: `Карточка с id ${id} успешно удалена` });
         } else {
             res.status(404).json({ error: 'Карточка не найдена' });
         }
@@ -355,10 +249,8 @@ app.delete('/api/cart/items/:id', async (req, res) => {
 });
 
 app.post('/api/cart/clear', async (req, res) => {
-    console.log('Clearing cart...');
     try {
         await Card.deleteMany({});
-        console.log('Корзина успешно очищена');
         res.status(200).json({ message: 'Корзина успешно очищена' });
     } catch (error) {
         console.error('Ошибка очистки корзины:', error);
@@ -369,7 +261,7 @@ app.post('/api/cart/clear', async (req, res) => {
 // Статические файлы
 app.use(express.static('public'));
 
-// Запуск сервера с WebSocket
+// Запуск сервера
 server.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
-});
+}); 

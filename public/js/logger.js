@@ -1,6 +1,13 @@
- //js/logger.js
+ 'use strict';
+
 export function logMessage(message) {
     const logContainer = document.getElementById("log-messages");
+
+    if (!logContainer) {
+        console.error("Log container not found in the DOM.");
+        return;
+    }
+
     const messageElement = document.createElement("div");
     messageElement.className = "log-message";
     messageElement.textContent = message;
@@ -15,7 +22,9 @@ export function logMessage(message) {
     setTimeout(() => {
         messageElement.classList.remove("show");
         setTimeout(() => {
-            logContainer.removeChild(messageElement);
+            if (logContainer.contains(messageElement)) {
+                logContainer.removeChild(messageElement);
+            }
         }, 500); // Должно совпадать с временем transition
     }, 1000); // Уведомление будет отображаться 3 секунды
 }
