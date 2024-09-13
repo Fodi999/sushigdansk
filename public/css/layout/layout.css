@@ -1,0 +1,287 @@
+.main-content {
+    padding-bottom: 100px;
+}
+
+.card-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 20px 0;
+    padding-bottom: 80px;
+    scroll-snap-type: x mandatory;
+}
+/* Основные стили для модальных окон */
+.modal {
+    display: none; /* Модальное окно скрыто по умолчанию */
+    position: fixed;
+    z-index: 1000; /* Высокий z-index для размещения поверх всех элементов */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Затемнённый фон */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+}
+
+/* Стили для контейнера сообщений чата */
+.chat-messages-container {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.modal-header {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#chat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Дополнительные стили для сообщения в чате */
+.message-card {
+    background-color: #ffffff; /* Белый фон, как в Telegram */
+    border-radius: 18px 18px 0 18px; /* Закругленные углы: правый верхний и нижний */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Глубже тень для объема */
+    padding: 15px;
+    margin: 10px 0;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease; /* Добавлен плавный переход для тени и фона */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.message-card:hover {
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15); /* Увеличение тени при наведении */
+    background-color: #f9f9f9; /* Легкое изменение фона при наведении */
+}
+
+.message-text {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.message-timestamp {
+    font-size: 12px;
+    color: #888;
+    text-align: right;
+    margin-top: 10px;
+    align-self: flex-end; /* Таймстамп выравнивается справа */
+}
+
+/* Стили для исходящих сообщений */
+.message-card.outgoing {
+    background-color: #dcf8c6; /* Зеленоватый цвет для исходящих сообщений, как в Telegram */
+    border-radius: 18px 18px 18px 0; /* Закругляем все углы, кроме левого верхнего */
+}
+
+/* Стили для входящих сообщений */
+.message-card.incoming {
+    background-color: #ffffff; /* Белый фон для входящих сообщений */
+    border-radius: 18px 18px 0 18px; /* Закругляем все углы, кроме правого верхнего */
+}
+
+
+/* Стили для содержимого корзины */
+.cart-header {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.cart-item {
+    position: relative; /* Родитель имеет относительное позиционирование */
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cart-item img {
+    width: 100px;
+    height: auto;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+.cart-item .item-details {
+    flex: 1;
+}
+
+.cart-item .item-details h3 {
+    font-size: 18px;
+    margin: 0 0 5px;
+}
+
+.cart-item .item-details p {
+    font-size: 14px;
+    margin: 0;
+}
+
+.cart-item .item-quantity {
+    color: red;
+    font-size: 14px;
+}
+
+.cart-item .remove-button {
+    position: absolute; /* Абсолютное позиционирование кнопки внутри cart-item */
+    bottom: 10px; /* Расположение на 10px выше нижнего края */
+    right: 10px; /* Расположение на 10px левее правого края */
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #cc0000;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.cart-item .remove-button:hover {
+    transform: scale(1.2); /* Увеличение кнопки при наведении */
+}
+
+
+/* Кнопка заказа и формы оформления заказа */
+.order-button {
+    font-family: 'Roboto', sans-serif;
+    width: 150px;
+    height: 40px;
+    border-radius: 20px;
+    background: #ff0099;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.order-button:hover {
+    transform: scale(1.05);
+    background-color: #e6007a;
+}
+
+.order-button:active {
+    background-color: #cc0077;
+    transform: scale(1.1);
+}
+
+#checkout-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center; /* Центрируем элементы по вертикали */
+    align-items: center; /* Центрируем по горизонтали */
+}
+
+#checkout-form label,
+#checkout-form input,
+#checkout-form textarea {
+    width: 100%; /* Чтобы элементы занимали всю ширину контейнера */
+    max-width: 400px; /* Ограничиваем максимальную ширину для улучшения внешнего вида */
+}
+
+#checkout-form input,
+#checkout-form textarea {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+#checkout-form textarea {
+    resize: vertical;
+    height: 100px;
+}
+.like-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.like-button {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #3b5998;
+    display: flex;
+    align-items: center;
+}
+
+.like-button:hover {
+    color: #4267b2;
+}
+
+/* Эмодзи-пикер для выбора */
+.emoji-picker {
+    display: none;
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    z-index: 100;
+}
+
+.emoji-picker button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.emoji-picker button:hover {
+    transform: scale(1.2);
+}
+
+.like-section.active .emoji-picker {
+    display: flex;
+    gap: 10px;
+}
+
+
+

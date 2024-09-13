@@ -1,4 +1,4 @@
-//server.js
+ //server.js
 // Импорт необходимых модулей
 const express = require('express');
 const axios = require('axios');
@@ -373,19 +373,3 @@ app.use(express.static('public'));
 server.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,2 +1,8 @@
-# .gitignore
+# Игнорировать node_modules (папка с зависимостями)
+node_modules/
+
+# Игнорировать файл .env (файл с конфиденциальными переменными окружения)
 .env
+
+# Игнорировать файл с учетными данными Google Service Account
+fodirobot-credentials.json

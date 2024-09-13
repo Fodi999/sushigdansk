@@ -1,13 +1,12 @@
-  /* Стили для навигации */
 .navigation {
     position: fixed;
-    bottom: 20px; /* Отступ снизу */
-    left: 20px; /* Отступ слева */
-    right: 20px; /* Отступ справа */
-    background: rgba(255, 255, 255, 0.6); /* Прозрачность 60% */
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.6);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    border-radius: 20px; /* Закругленные углы */
-    padding: 10px; /* Внутренние отступы */
+    border-radius: 20px;
+    padding: 10px;
 }
 
 .navigation ul {
@@ -64,7 +63,3 @@
     opacity: 1;
 }
 
-/* Убедитесь, что этот селектор соответствует вашей структуре HTML */
-.list.active .indicator {
-    left: calc(50% - 35px);
-}
