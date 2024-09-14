@@ -1,5 +1,6 @@
 'use strict';
-//js/cards.js
+
+// js/cards.js
 export const cardsDataRow1 = [
     { title: "Najlepszy zestaw Filadelfii", details: "930 грамов, 32 sztuki", price: "240 zł", image: "images/Rectangle-3.webp" },
     { title: "Zestaw California", details: "800 грамов, 28 sztуки", price: "220 zł", image: "images/Rectangle-3.webp" },
@@ -36,23 +37,57 @@ export const cardsDataRow4 = [
     { title: "Snack F", details: "550 грамов, 22 sztуки", price: "200 zł", image: "images/Rectangle-3.webp" }
 ];
 
+// Функция для создания карты, всегда возвращающая одинаковую структуру (мономорфизм)
 export function createCard(card, addItemToCart) {
     const cardElement = document.createElement("div");
     cardElement.className = "sushi-card";
 
+    // Создаем и добавляем изображение
+    const imageElement = createImageElement(card);
+    cardElement.appendChild(imageElement);
+
+    // Создаем и добавляем заголовок
+    const titleElement = createTitleElement(card);
+    cardElement.appendChild(titleElement);
+
+    // Создаем и добавляем описание
+    const detailsElement = createDetailsElement(card);
+    cardElement.appendChild(detailsElement);
+
+    // Создаем секцию цены и управления количеством
+    const priceSection = createPriceSection(card, addItemToCart);
+    cardElement.appendChild(priceSection);
+
+    return cardElement;
+}
+
+// Вспомогательная функция для создания изображения
+function createImageElement(card) {
     const imageElement = document.createElement("img");
     imageElement.src = card.image;
     imageElement.alt = card.title;
     imageElement.className = "sushi-image";
+    return imageElement;
+}
 
+// Вспомогательная функция для создания заголовка
+function createTitleElement(card) {
     const titleElement = document.createElement("h2");
     titleElement.className = "sushi-title";
     titleElement.textContent = card.title;
+    return titleElement;
+}
 
+// Вспомогательная функция для создания описания
+function createDetailsElement(card) {
     const detailsElement = document.createElement("p");
     detailsElement.className = "sushi-details";
     detailsElement.textContent = card.details;
+    return detailsElement;
+}
 
+// Вспомогательная функция для создания секции цены и количества
+function createPriceSection(card, addItemToCart) {
     const priceSection = document.createElement("div");
     priceSection.className = "price-section";
 
@@ -60,17 +95,24 @@ export function createCard(card, addItemToCart) {
     priceElement.className = "price";
     priceElement.textContent = card.price;
 
+    const quantitySection = createQuantitySection();
+    const buttonElement = createOrderButton(card, quantitySection, addItemToCart);
+
+    priceSection.appendChild(priceElement);
+    priceSection.appendChild(quantitySection);
+    priceSection.appendChild(buttonElement);
+
+    return priceSection;
+}
+
+// Вспомогательная функция для создания секции количества
+function createQuantitySection() {
     const quantitySection = document.createElement("div");
     quantitySection.className = "quantity-section";
 
     const decreaseButton = document.createElement("button");
     decreaseButton.className = "quantity-button";
     decreaseButton.innerHTML = '<ion-icon name="remove-circle-outline"></ion-icon>';
-    decreaseButton.addEventListener("click", () => {
-        if (quantityInput.value > 1) {
-            quantityInput.value = parseInt(quantityInput.value) - 1;
-        }
-    });
 
     const quantityInput = document.createElement("input");
     quantityInput.min = 1;
@@ -80,6 +122,13 @@ export function createCard(card, addItemToCart) {
     const increaseButton = document.createElement("button");
     increaseButton.className = "quantity-button";
     increaseButton.innerHTML = '<ion-icon name="add-circle-outline"></ion-icon>';
+
+    decreaseButton.addEventListener("click", () => {
+        if (quantityInput.value > 1) {
+            quantityInput.value = parseInt(quantityInput.value) - 1;
+        }
+    });
+
     increaseButton.addEventListener("click", () => {
         quantityInput.value = parseInt(quantityInput.value) + 1;
     });
@@ -88,11 +137,17 @@ export function createCard(card, addItemToCart) {
     quantitySection.appendChild(quantityInput);
     quantitySection.appendChild(increaseButton);
 
+    return quantitySection;
+}
+
+// Вспомогательная функция для создания кнопки заказа
+function createOrderButton(card, quantitySection, addItemToCart) {
     const buttonElement = document.createElement("button");
     buttonElement.className = "order-button";
     buttonElement.textContent = "Chcieć";
 
     buttonElement.addEventListener("click", () => {
+        const quantityInput = quantitySection.querySelector(".quantity-input");
         const itemWithQuantity = {
             ...card,
             quantity: parseInt(quantityInput.value)
@@ -100,14 +155,6 @@ export function createCard(card, addItemToCart) {
         addItemToCart(itemWithQuantity);
     });
 
-    priceSection.appendChild(priceElement);
-    priceSection.appendChild(quantitySection);
-    priceSection.appendChild(buttonElement);
-
-    cardElement.appendChild(imageElement);
-    cardElement.appendChild(titleElement);
-    cardElement.appendChild(detailsElement);
-    cardElement.appendChild(priceSection);
-
-    return cardElement;
+    return buttonElement;
 }
+ 

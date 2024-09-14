@@ -75,9 +75,9 @@
                 </a>
             </li>
             <li class="list">
-                <a href="#" aria-label="Account">
-                    <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
-                    <span class="text">Кабинет</span>
+                <a href="#" id="homeButton" aria-label="Home">
+                    <span class="icon"><ion-icon name="home-outline"></ion-icon></span>
+                    <span class="text">Домой</span>
                 </a>
             </li>
             <li class="list" id="delivery-button">
@@ -105,27 +105,22 @@
 <!-- Модальное окно чата -->
 <div id="chat-modal" class="modal">
     <div class="modal-content">
-        <!-- Кнопка для закрытия модального окна -->
-        <span class="close-button" id="close-chat-modal">&times;</span>
-        <h2>Чат</h2>
-        
-        <!-- Контейнер для сообщений чата -->
-        <div id="chat-content" style="max-height: 400px; overflow-y: auto; padding: 10px;">
-            <!-- Сюда будут добавляться сообщения из Telegram -->
-            <div id="chatMessages" class="chat-messages-container"></div>
-
+        <!-- Контейнер для сообщений -->
+        <div id="chat-content">
+            <div id="chatMessages" class="chat-messages-container">
+                <!-- Сообщения будут динамически добавляться сюда -->
+            </div>
         </div>
-       
     </div>
 </div>
+
 
 
 
     <!-- Модальное окно корзины -->
     <div id="cart-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button" id="close-modal">&times;</span>
-            <h2 class="cart-header">Корзина</h2>
+            
             <div id="cart-items">
                 <!-- Пример карточек товаров -->
                 <div class="cart-item">
@@ -165,13 +160,9 @@
     <!-- Модальное окно доставки -->
     <div id="delivery-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button" id="close-delivery-modal">&times;</span>
-            <h2>Доставка</h2>
-            <div id="delivery-map" style="height: 300px; width: 100%;">
+         
+            <div id="delivery-map" class="delivery-map">
                 <!-- Здесь будет карта -->
-            </div>
-            <p>Время доставки: 30-45 минут</p>
-        </div>
     </div>
 
     <!-- Контейнер для всплывающих уведомлений -->
@@ -183,6 +174,16 @@
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="/socket.io/socket.io.js"></script>
- 
+    <script>
+        document.getElementById('homeButton').addEventListener('click', function(event) {
+            event.preventDefault(); // Предотвращаем переход по ссылке
+    
+            // Закрываем все модальные окна
+            var modals = document.querySelectorAll('.modal');
+            modals.forEach(function(modal) {
+                modal.style.display = 'none';
+            });
+        });
+    </script>
 </body>
 </html>

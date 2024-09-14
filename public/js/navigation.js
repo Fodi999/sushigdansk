@@ -9,17 +9,27 @@ export function setupNavigation() {
         return;
     }
 
-    function updateActiveItem() {
-        listItems.forEach(item => item.classList.remove('active'));
-        this.classList.add('active');
-        moveIndicator(this);
+    // Вспомогательная функция для удаления и добавления класса 'active'
+    function updateActiveItem(item) {
+        resetActiveItems(listItems);
+        item.classList.add('active');
+        moveIndicator(item, indicator);
     }
 
-    function moveIndicator(element) {
+    // Вспомогательная функция для сброса активных классов
+    function resetActiveItems(items) {
+        items.forEach(item => item.classList.remove('active'));
+    }
+
+    // Вспомогательная функция для перемещения индикатора
+    function moveIndicator(element, indicatorElement) {
         const position = element.getBoundingClientRect();
-        indicator.style.left = `${element.offsetLeft}px`;
-        indicator.style.width = `${element.clientWidth}px`;
+        indicatorElement.style.left = `${element.offsetLeft}px`;
+        indicatorElement.style.width = `${element.clientWidth}px`;
     }
 
-    listItems.forEach(item => item.addEventListener('click', updateActiveItem));
+    // Добавляем обработчики событий для каждого элемента списка
+    listItems.forEach(item => {
+        item.addEventListener('click', () => updateActiveItem(item));
+    });
 }

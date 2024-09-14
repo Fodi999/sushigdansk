@@ -1,3 +1,4 @@
+ /* Стили для навигации */
 .navigation {
     position: fixed;
     bottom: 20px;
@@ -7,6 +8,7 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
     padding: 10px;
+    z-index: 1100; /* Устанавливаем z-index выше, чтобы навигация была поверх модальных окон */
 }
 
 .navigation ul {
@@ -61,4 +63,11 @@
 
 .navigation .list.active .text {
     opacity: 1;
+}
+
+
+
+/* Пример активации модального окна */
+.modal.active {
+    display: flex; /* Показываем модальное окно */
 }
